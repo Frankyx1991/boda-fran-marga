@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,18 +7,52 @@
   <title>Fran & Marga - 11/10/2025</title>
   <style>
     body {
+      margin: 0;
       font-family: 'Georgia', serif;
-      text-align: center;
-      background: #fffaf9 url('https://i.imgur.com/gfAvuMu.jpg') no-repeat top center;
+      background: url('https://images.unsplash.com/photo-1520626752204-0f1b6c7c8b9e?auto=format&fit=crop&w=1280&q=80') no-repeat center center fixed;
       background-size: cover;
-      padding: 3em 1em;
+      text-align: center;
+      color: #333;
+    }
+    #portada {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 1000;
+    }
+    #portada img {
+      max-width: 90%;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+    #portada button {
+      margin-top: 1em;
+      padding: 1em 2em;
+      font-size: 1em;
+      border: none;
+      background-color: #d94f70;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
     }
     h1 {
-      font-size: 2.2em;
+      margin-top: 1.5em;
       color: #912f56;
+      background-color: rgba(255,255,255,0.8);
+      display: inline-block;
+      padding: 0.5em 1em;
+      border-radius: 10px;
     }
     p {
-      font-size: 1.1em;
+      background-color: rgba(255,255,255,0.8);
+      display: inline-block;
+      padding: 0.3em 1em;
+      border-radius: 10px;
       color: #5c5c5c;
     }
     .btn-container {
@@ -44,10 +79,26 @@
       background: #fff1f1;
       padding: 10px;
       border-radius: 8px;
+      display: none;
+    }
+    #cargando {
+      display: none;
+      font-size: 1.1em;
+      margin-top: 1em;
+      background: #fff3f6;
+      padding: 1em;
+      border-radius: 10px;
+      color: #912f56;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
+
+  <div id="portada">
+    <img src="https://raw.githubusercontent.com/Frankyx1991/boda-fran-marga/main/portada_qr.jpg" alt="Portada Fran & Marga" />
+    <button onclick="document.getElementById('portada').style.display='none'">Entrar</button>
+  </div>
 
   <h1>📸 Fran & Marga</h1>
   <p>11 de octubre de 2025<br>¡Captura tus mejores momentos y compártelos con nosotros!</p>
@@ -63,10 +114,12 @@
     <label for="galeriaInput">📁 Subir desde Galería</label>
   </div>
 
+  <div id="cargando">⏳ Subiendo archivo... un momento por favor</div>
   <div id="debug"></div>
 
   <script>
     const debugEl = document.getElementById("debug");
+    const cargandoEl = document.getElementById("cargando");
 
     async function subirArchivo(file) {
       if (!file) return;
@@ -79,6 +132,7 @@
         formData.append('fileName', file.name);
         formData.append('mimeType', file.type);
 
+        cargandoEl.style.display = "block";
         try {
           const response = await fetch("https://script.google.com/macros/s/AKfycbxtaLnmSEpXzdoffOvYTIEKJEt-K2_N2BPTHNmCmYq5U7HHpefHRdh9taizd39Slqmh/exec", {
             method: "POST",
@@ -94,7 +148,9 @@
           }
         } catch (err) {
           debugEl.innerText = "❌ Error: " + err.message;
-          console.error(err);
+          debugEl.style.display = "block";
+        } finally {
+          cargandoEl.style.display = "none";
         }
       };
       reader.readAsDataURL(file);
