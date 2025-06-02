@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fran & Marga - 11/10/2025</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #fff7f0;
+      padding: 2em;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 0.2em;
+    }
+    p {
+      color: #555;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    label {
+      background: #ff69b4;
+      color: white;
+      padding: 1em 2em;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 2em;
+      font-weight: bold;
+    }
+    .logo {
+      margin-bottom: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="logo">
+    <h1>📸 Fran & Marga</h1>
+    <p>Boda 11/10/2025</p>
+  </div>
+
+  <input type="file" id="fileInput" accept="image/*,video/*" capture="environment">
+  <label for="fileInput">Tomar o subir foto / vídeo</label>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfakTZefMtBjjBVU7r4VK5PdpCIiQB2eM",
+      authDomain: "boda-fran-marga.firebaseapp.com",
+      projectId: "boda-fran-marga",
+      storageBucket: "boda-fran-marga.firebasestorage.app",
+      messagingSenderId: "510120256743",
+      appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+
+    const fileInput = document.getElementById("fileInput");
+    fileInput.addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const ref = storage.ref().child(`boda-fran-marga/${timestamp}_${file.name}`);
+
+      try {
+        await ref.put(file);
+        alert("¡Gracias! Foto o vídeo subido con éxito 🎉");
+        fileInput.value = "";
+      } catch (err) {
+        alert("Error al subir archivo 😢");
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
