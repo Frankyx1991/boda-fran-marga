@@ -2,42 +2,46 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fran & Marga - 11/10/2025</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Georgia', serif;
       text-align: center;
-      background: #fff7f0;
-      padding: 2em;
+      background: #fffaf9 url('https://i.imgur.com/gfAvuMu.jpg') no-repeat top center;
+      background-size: cover;
+      padding: 3em 1em;
     }
     h1 {
-      font-size: 2em;
-      margin-bottom: 0.2em;
+      font-size: 2.2em;
+      color: #912f56;
     }
     p {
-      color: #555;
+      font-size: 1.1em;
+      color: #5c5c5c;
+    }
+    .btn-container {
+      margin-top: 2em;
     }
     input[type="file"] {
       display: none;
     }
     label {
-      background: #ff69b4;
-      color: white;
-      padding: 1em 2em;
-      border-radius: 10px;
-      cursor: pointer;
       display: inline-block;
-      margin-top: 2em;
+      margin: 1em;
+      padding: 1em 2em;
+      background-color: #d94f70;
+      color: white;
+      border-radius: 10px;
       font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
     #debug {
       margin-top: 20px;
       font-size: 0.9em;
       color: #aa0000;
-      background: #ffeeee;
+      background: #fff1f1;
       padding: 10px;
       border-radius: 8px;
     }
@@ -46,55 +50,59 @@
 <body>
 
   <h1>📸 Fran & Marga</h1>
-  <p>Boda 11/10/2025</p>
+  <p>11 de octubre de 2025<br>¡Captura tus mejores momentos y compártelos con nosotros!</p>
 
-  <input type="file" id="fileInput" accept="image/*,video/*" capture="environment">
-  <label for="fileInput">Tomar o subir foto / vídeo</label>
+  <div class="btn-container">
+    <input type="file" id="fotoInput" accept="image/*" capture="environment">
+    <label for="fotoInput">📸 Tomar Foto</label>
+
+    <input type="file" id="videoInput" accept="video/*" capture="environment">
+    <label for="videoInput">🎥 Grabar Vídeo</label>
+
+    <input type="file" id="galeriaInput" accept="image/*,video/*">
+    <label for="galeriaInput">📁 Subir desde Galería</label>
+  </div>
 
   <div id="debug"></div>
 
   <script>
     const debugEl = document.getElementById("debug");
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDfakTZefMtBjjBVU7r4VK5PdpCIiQB2eM",
-      authDomain: "boda-fran-marga.firebaseapp.com",
-      projectId: "boda-fran-marga",
-      storageBucket: "boda-fran-marga.firebasestorage.app", // ✅ CORRECTO
-      messagingSenderId: "510120256743",
-      appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
-    };
+    async function subirArchivo(file) {
+      if (!file) return;
 
-    try {
-      firebase.initializeApp(firebaseConfig);
-    } catch (e) {
-      debugEl.innerText = "🔥 Error al inicializar Firebase: " + e.message;
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const base64Data = reader.result.split(',')[1];
+        const formData = new FormData();
+        formData.append('fileData', base64Data);
+        formData.append('fileName', file.name);
+        formData.append('mimeType', file.type);
+
+        try {
+          const response = await fetch("https://script.google.com/macros/s/AKfycbxtaLnmSEpXzdoffOvYTIEKJEt-K2_N2BPTHNmCmYq5U7HHpefHRdh9taizd39Slqmh/exec", {
+            method: "POST",
+            body: formData
+          });
+
+          const text = await response.text();
+          if (text === "OK") {
+            alert("¡Gracias! Archivo subido con éxito 🎉");
+            debugEl.innerText = "";
+          } else {
+            throw new Error(text);
+          }
+        } catch (err) {
+          debugEl.innerText = "❌ Error: " + err.message;
+          console.error(err);
+        }
+      };
+      reader.readAsDataURL(file);
     }
 
-    const storage = firebase.storage();
-
-    const fileInput = document.getElementById("fileInput");
-    fileInput.addEventListener("change", async (event) => {
-      const file = event.target.files[0];
-      if (!file) {
-        debugEl.innerText = "⚠️ No se seleccionó ningún archivo.";
-        return;
-      }
-
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      const ref = storage.ref().child(`boda-fran-marga/${timestamp}_${file.name}`);
-
-      try {
-        await ref.put(file);
-        alert("¡Gracias! Foto o vídeo subido con éxito 🎉");
-        fileInput.value = "";
-        debugEl.innerText = "";
-      } catch (err) {
-        alert("Error al subir archivo 😢");
-        debugEl.innerText = "❌ Error técnico: " + err.message + "\\n\\nVerifica que el bucket y las reglas CORS estén bien configuradas.";
-        console.error(err);
-      }
-    });
+    document.getElementById("fotoInput").addEventListener("change", e => subirArchivo(e.target.files[0]));
+    document.getElementById("videoInput").addEventListener("change", e => subirArchivo(e.target.files[0]));
+    document.getElementById("galeriaInput").addEventListener("change", e => subirArchivo(e.target.files[0]));
   </script>
 </body>
 </html>
