@@ -60,7 +60,7 @@
       apiKey: "AIzaSyDfakTZefMtBjjBVU7r4VK5PdpCIiQB2eM",
       authDomain: "boda-fran-marga.firebaseapp.com",
       projectId: "boda-fran-marga",
-      storageBucket: "boda-fran-marga.firebasestorage.app",
+      storageBucket: "boda-fran-marga.firebasestorage.app", // ✅ CORRECTO
       messagingSenderId: "510120256743",
       appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
     };
@@ -91,7 +91,7 @@
         debugEl.innerText = "";
       } catch (err) {
         alert("Error al subir archivo 😢");
-        debugEl.innerText = "❌ Error técnico: " + err.message + "\\n\\nVerifica que aplicaste bien las reglas CORS y el bucket.";
+        debugEl.innerText = "❌ Error técnico: " + err.message + "\\n\\nVerifica que el bucket y las reglas CORS estén bien configuradas.";
         console.error(err);
       }
     });
