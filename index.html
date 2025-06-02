@@ -1,11 +1,12 @@
-
+# Repetir la operación después del reset para generar el archivo .txt
+debug_html_content = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fran & Marga - 11/10/2025</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
   <style>
     body {
@@ -37,6 +38,14 @@
     .logo {
       margin-bottom: 1em;
     }
+    #debug {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #aa0000;
+      background: #ffeeee;
+      padding: 10px;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
@@ -49,7 +58,11 @@
   <input type="file" id="fileInput" accept="image/*,video/*" capture="environment">
   <label for="fileInput">Tomar o subir foto / vídeo</label>
 
+  <div id="debug"></div>
+
   <script>
+    const debugEl = document.getElementById("debug");
+
     const firebaseConfig = {
       apiKey: "AIzaSyDfakTZefMtBjjBVU7r4VK5PdpCIiQB2eM",
       authDomain: "boda-fran-marga.firebaseapp.com",
@@ -59,13 +72,21 @@
       appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    try {
+      firebase.initializeApp(firebaseConfig);
+    } catch (e) {
+      debugEl.innerText = "🔥 Error al inicializar Firebase: " + e.message;
+    }
+
     const storage = firebase.storage();
 
     const fileInput = document.getElementById("fileInput");
     fileInput.addEventListener("change", async (event) => {
       const file = event.target.files[0];
-      if (!file) return;
+      if (!file) {
+        debugEl.innerText = "⚠️ No se seleccionó ningún archivo.";
+        return;
+      }
 
       const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
       const ref = storage.ref().child(`boda-fran-marga/${timestamp}_${file.name}`);
@@ -74,11 +95,20 @@
         await ref.put(file);
         alert("¡Gracias! Foto o vídeo subido con éxito 🎉");
         fileInput.value = "";
+        debugEl.innerText = "";
       } catch (err) {
         alert("Error al subir archivo 😢");
+        debugEl.innerText = "❌ Error técnico: " + err.message + "\\n\\nRevisa: reglas, storageBucket, dominio autorizado en Firebase.";
         console.error(err);
       }
     });
   </script>
 </body>
 </html>
+"""
+
+debug_txt_path = "/mnt/data/index_debug.txt"
+with open(debug_txt_path, "w", encoding="utf-8") as f:
+    f.write(debug_html_content)
+
+debug_txt_path
