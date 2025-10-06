@@ -20,10 +20,10 @@
       <p class="date">11/10/2025</p>
     </header>
 
-    <nav class="controls">
-      <button id="btnPhoto" class="btn">📷 Tomar foto</button>
-      <button id="btnVideo" class="btn">🎥 Grabar vídeo</button>
-      <button id="btnGallery" class="btn">🖼️ Subir desde galería</button>
+    <nav class="controls" aria-label="Controles de subida">
+      <button id="btnPhoto" class="btn" type="button" aria-label="Tomar foto">📷 Tomar foto</button>
+      <button id="btnVideo" class="btn" type="button" aria-label="Grabar vídeo">🎥 Grabar vídeo</button>
+      <button id="btnGallery" class="btn" type="button" aria-label="Subir desde galería">🖼️ Subir desde galería</button>
     </nav>
 
     <!-- Inputs ocultos -->
@@ -36,7 +36,7 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // Config Firebase (tu proyecto)
+    // Config de tu proyecto Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDfakTZefMtBjjBVU7r4VK5PdpCIiQB2eM",
       authDomain: "boda-fran-marga.firebaseapp.com",
@@ -45,7 +45,13 @@
       messagingSenderId: "510120256743",
       appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
     };
-    firebase.initializeApp(firebaseConfig);
+
+    // Inicializa (evita doble init por si vuelven a esta página desde la portada)
+    if (firebase.apps?.length) {
+      firebase.app();
+    } else {
+      firebase.initializeApp(firebaseConfig);
+    }
     const storage = firebase.storage();
 
     // Toast helper
@@ -68,7 +74,7 @@
       }
 
       const ts = new Date().toISOString().replace(/[:.]/g, '-');
-      // IMPORTANTE: regex correcta (espacios -> guiones bajos)
+      // Nombre seguro (espacios -> _)
       const safeName = (file.name || 'archivo').replace(/\s+/g, '_');
       const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safeName}`;
       const ref  = storage.ref().child(path);
@@ -83,14 +89,14 @@
       }
     }
 
-    // Enlaces botones → inputs
+    // Bind botones → inputs
     const inPhoto   = document.getElementById('inPhoto');
     const inVideo   = document.getElementById('inVideo');
     const inGallery = document.getElementById('inGallery');
 
-    document.getElementById('btnPhoto').addEventListener('click', () => inPhoto.click());
-    document.getElementById('btnVideo').addEventListener('click', () => inVideo.click());
-    document.getElementById('btnGallery').addEventListener('click', () => inGallery.click());
+    document.getElementById('btnPhoto').addEventListener('click',  () => inPhoto.click());
+    document.getElementById('btnVideo').addEventListener('click',  () => inVideo.click());
+    document.getElementById('btnGallery').addEventListener('click',() => inGallery.click());
 
     inPhoto.addEventListener('change',   (e) => uploadFile(e.target.files[0], 'fotos'));
     inVideo.addEventListener('change',   (e) => uploadFile(e.target.files[0], 'videos'));
