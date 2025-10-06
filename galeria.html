@@ -10,7 +10,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
-  <!-- Estilos -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -46,7 +45,7 @@
       appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
     };
 
-    // Inicializa (evita doble init por si vuelven a esta página desde la portada)
+    // Inicializa (evita doble init si vuelven desde la portada)
     if (firebase.apps?.length) {
       firebase.app();
     } else {
@@ -74,7 +73,6 @@
       }
 
       const ts = new Date().toISOString().replace(/[:.]/g, '-');
-      // Nombre seguro (espacios -> _)
       const safeName = (file.name || 'archivo').replace(/\s+/g, '_');
       const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safeName}`;
       const ref  = storage.ref().child(path);
