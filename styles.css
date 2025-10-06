@@ -3,6 +3,7 @@
 html, body { height: 100%; margin: 0; }
 body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
 
+/* Fondo con vuestra foto centrada al 30% */
 .stage {
   position: relative;
   min-height: 100vh;
@@ -12,6 +13,7 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   grid-template-rows: 1fr auto;
 }
 
+/* Texto superior (Fran & Marga) */
 .overlay {
   text-align: center;
   padding: calc(env(safe-area-inset-top, 0) + 24px) 16px 8px;
@@ -30,18 +32,22 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   opacity: .97;
 }
 
+/* Sección central (botón “Entrar”) */
 .center-cta {
   display: grid;
   place-items: center;
   padding: 20px 16px 32px;
 }
+
+/* === BOTONES (dorado más oscuro y legible) === */
 .btn-primary, .btn {
-  --gold-bg: rgba(247, 224, 173, .35);
-  --gold-border: rgba(247, 224, 173, .9);
-  --gold-text: #b3925a;
+  --gold-bg: rgba(230, 200, 140, 0.35);    /* Fondo translúcido dorado oscuro */
+  --gold-border: rgba(210, 180, 120, 0.95); /* Borde más marcado */
+  --gold-text: #8a6b2e;                     /* Texto más oscuro y fácil de leer */
+  
   border: 1px solid var(--gold-border);
   background: var(--gold-bg);
-  color: var(--gold-text); #000000
+  color: var(--gold-text);
   font-weight: 700;
   border-radius: 14px;
   box-shadow: 0 8px 24px rgba(0,0,0,.25);
@@ -55,11 +61,14 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   font-weight: 800;
   text-decoration: none;
 }
-.btn-primary:active, .btn:active {
-  transform: scale(.98);
-  background: rgba(247, 224, 173, .48);
+
+.btn-primary:active,
+.btn:active {
+  transform: scale(0.98);
+  background: rgba(230, 200, 140, 0.5); /* Más brillante al pulsar */
 }
 
+/* Contenedor inferior (botones de cámara y galería) */
 .controls {
   position: sticky;
   bottom: 0;
@@ -70,12 +79,14 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   justify-content: center;
 }
 
+/* Ajustes responsive de botones */
 .btn {
   flex: 1 1 auto;
   padding: 12px 14px;
   font-size: clamp(14px, 3.5vw, 16px);
 }
 
+/* Notificaciones tipo “Subiendo…” */
 .toast {
   position: fixed;
   left: 50%;
