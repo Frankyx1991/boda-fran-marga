@@ -39,14 +39,11 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   padding: 20px 16px 32px;
 }
 
-/* === BOTONES (fondo dorado + texto blanco) === */
+/* === BOTONES (fondo dorado translúcido elegante) === */
 .btn-primary, .btn {
-  /* Fondo dorado translúcido elegante */
-  --gold-bg: rgba(180, 140, 60, 0.7);
-  /* Borde dorado intenso */
-  --gold-border: rgba(160, 120, 40, 0.95);
-  /* Texto blanco brillante */
-  --gold-text: #ffffff;
+  --gold-bg: rgba(180, 140, 60, 0.75);    /* Fondo dorado translúcido */
+  --gold-border: rgba(160, 120, 40, 0.95);/* Borde dorado */
+  --gold-text: #ffffff;                   /* Texto blanco */
 
   border: 1px solid var(--gold-border);
   background: var(--gold-bg);
@@ -70,7 +67,7 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
 /* Efecto al pulsar */
 .btn-primary:active, .btn:active {
   transform: scale(0.98);
-  background: rgba(180, 140, 60, 0.85);
+  background: rgba(180, 140, 60, 0.9);
 }
 
 /* Barra inferior (botones cámara/galería) */
@@ -110,3 +107,22 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   transition: opacity .25s ease;
 }
 .toast.show { opacity: 1; }
+
+/* === FORZAR TEXTO BLANCO EN TODOS LOS BOTONES === */
+.btn,
+.btn-primary {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,.45);
+}
+
+/* Asegurar también los estados de enlaces (Entrar) */
+.btn-primary:link,
+.btn-primary:visited,
+.btn-primary:hover,
+.btn-primary:active,
+.btn:link,
+.btn:visited,
+.btn:hover,
+.btn:active {
+  color: #ffffff !important;
+}
