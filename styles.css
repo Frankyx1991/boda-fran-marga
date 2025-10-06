@@ -13,7 +13,7 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   grid-template-rows: 1fr auto;
 }
 
-/* Cabecera superior */
+/* Texto superior */
 .overlay {
   text-align: center;
   padding: calc(env(safe-area-inset-top, 0) + 24px) 16px 8px;
@@ -32,18 +32,18 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   opacity: .97;
 }
 
-/* Sección central (botón Entrar) */
+/* Portada: botón “Entrar” */
 .center-cta {
   display: grid;
   place-items: center;
   padding: 20px 16px 32px;
 }
 
-/* === BOTONES (texto más oscuro) === */
+/* === BOTONES (dorado translúcido + texto más oscuro) === */
 .btn-primary, .btn {
-  --gold-bg: rgba(230, 200, 140, 0.35);   /* Fondo translúcido */
-  --gold-border: rgba(210, 180, 120, 0.95); /* Borde suave dorado */
-  --gold-text: #5b4520;                     /* Texto marrón oscuro legible */
+  --gold-bg: rgba(230, 200, 140, 0.35);    /* Fondo translúcido */
+  --gold-border: rgba(210, 180, 120, 0.95);/* Borde más marcado */
+  --gold-text: #5b4520;                     /* Texto marrón oscuro y legible */
 
   border: 1px solid var(--gold-border);
   background: var(--gold-bg);
@@ -64,13 +64,12 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
 }
 
 /* Efecto al pulsar */
-.btn-primary:active,
-.btn:active {
+.btn-primary:active, .btn:active {
   transform: scale(0.98);
   background: rgba(230, 200, 140, 0.55);
 }
 
-/* Contenedor inferior (botones cámara y galería) */
+/* Barra inferior (botones cámara/galería) */
 .controls {
   position: sticky;
   bottom: 0;
@@ -88,7 +87,7 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   font-size: clamp(14px, 3.5vw, 16px);
 }
 
-/* Toast (notificación de subida) */
+/* Toast “Subiendo…” */
 .toast {
   position: fixed;
   left: 50%;
