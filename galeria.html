@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Fran & Marga — 11/10/2025</title>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="stage">
+    <div class="overlay">
+      <h1>Fran &amp; Marga</h1>
+      <p class="date">11/10/2025</p>
+    </div>
+
+    <div class="controls">
+      <button id="btnPhoto" class="btn">📷 Tomar foto</button>
+      <button id="btnVideo" class="btn">🎥 Grabar vídeo</button>
+      <button id="btnGallery" class="btn">🖼️ Subir desde galería</button>
+    </div>
+
+    <input id="inPhoto" type="file" accept="image/*" capture="environment" hidden>
+    <input id="inVideo" type="file" accept="video/*" capture="camcorder" hidden>
+    <input id="inGallery" type="file" accept="image/*,video/*" hidden>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // Firebase config (mismo proyecto)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfakTZefMtBjjBVU7r4VK5PdpCIiQB2eM",
+      authDomain: "boda-fran-marga.firebaseapp.com",
+      projectId: "boda-fran-marga",
+      storageBucket: "boda-fran-marga.firebasestorage.app",
+      messagingSenderId: "510120256743",
+      appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+
+    // Toast helper
+    const toast = (msg) => {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+    };
+
+    async function uploadFile(file, folder){
+      if(!file) return;
+      const maxMB = 25;
+      if (file.size > maxMB * 1024 * 1024) { toast(`El archivo supera ${maxMB} MB.`); return; }
+      const ts = new Date().toISOString().replace(/[:.]/g,'-');
+      const safeName = (file.name || 'archivo').replace(/\s+/g,'_');
+      const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safeName}`;
+      const ref = storage.ref().child(path);
+      try{
+        toast('Subiendo… Por favor espera');
+        await ref.put(file);
+        toast('¡Gracias por compartir este momento con nosotros 💖!');
+      }catch(err){
+        console.error(err);
+        toast('Error al subir. Vuelve a intentarlo.');
+      }
+    }
+
+    const inPhoto = document.getElementById('inPhoto');
+    const inVideo = document.getElementById('inVideo');
+    const inGallery = document.getElementById('inGallery');
+    document.getElementById('btnPhoto').addEventListener('click', ()=>inPhoto.click());
+    document.getElementById('btnVideo').addEventListener('click', ()=>inVideo.click());
+    document.getElementById('btnGallery').addEventListener('click', ()=>inGallery.click());
+    inPhoto.addEventListener('change', e=>uploadFile(e.target.files[0], 'fotos'));
+    inVideo.addEventListener('change', e=>uploadFile(e.target.files[0], 'videos'));
+    inGallery.addEventListener('change', e=>uploadFile(e.target.files[0], 'galeria'));
+  </script>
+</body>
+</html>
