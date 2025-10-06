@@ -39,22 +39,22 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   padding: 20px 16px 32px;
 }
 
-/* === BOTONES (mejor contraste, elegantes y legibles) === */
+/* === BOTONES (más contraste y legibilidad) === */
 .btn-primary, .btn {
-  /* Fondo dorado ambar translúcido con más opacidad */
-  --gold-bg: rgba(200, 160, 90, 0.55);
-  /* Borde cálido ligeramente más oscuro */
-  --gold-border: rgba(150, 110, 40, 0.9);
-  /* Texto marrón oscuro legible */
-  --gold-text: #2b1d04;
+  /* Fondo dorado oscuro con opacidad alta */
+  --gold-bg: rgba(150, 120, 60, 0.85);
+  /* Borde más fuerte */
+  --gold-border: rgba(120, 90, 40, 1);
+  /* Texto negro intenso */
+  --gold-text: #000000;
 
   border: 1px solid var(--gold-border);
   background: var(--gold-bg);
   color: var(--gold-text);
   font-weight: 700;
   border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
-  backdrop-filter: blur(10px) saturate(1.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  backdrop-filter: blur(6px) saturate(1.1);
   transition: transform .08s ease, background .2s ease, color .2s ease;
 }
 
@@ -69,7 +69,7 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
 /* Efecto al pulsar */
 .btn-primary:active, .btn:active {
   transform: scale(0.98);
-  background: rgba(200, 160, 90, 0.75);
+  background: rgba(120, 90, 40, 0.95);
 }
 
 /* Barra inferior (botones cámara/galería) */
@@ -81,10 +81,9 @@ body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
   display: flex;
   gap: 10px;
   justify-content: center;
-  /* Difuminado general bajo los botones (mejora visibilidad sobre fotos claras) */
-  backdrop-filter: blur(8px) brightness(0.98);
-  background: rgba(255,255,255,0.05);
-  border-top: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.08);
+  border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 /* Botones inferiores */
