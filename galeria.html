@@ -10,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
+  <!-- Estilos existentes -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -35,38 +36,35 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // Config de tu proyecto Firebase
+    // 1) Config de tu proyecto (bucket correcto para Web)
     const firebaseConfig = {
       apiKey: "AIzaSyDfakTZefMtBjjBVU7r4VK5PdpCIiQB2eM",
       authDomain: "boda-fran-marga.firebaseapp.com",
       projectId: "boda-fran-marga",
-      storageBucket: "boda-fran-marga.firebasestorage.app",
+      storageBucket: "boda-fran-marga.appspot.com", // ← IMPORTANTE
       messagingSenderId: "510120256743",
       appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
     };
 
-    // Inicializa (evita doble init si vuelven desde la portada)
-    if (firebase.apps?.length) {
-      firebase.app();
-    } else {
-      firebase.initializeApp(firebaseConfig);
-    }
+    // 2) Inicializar una sola vez (por si vuelven desde la portada)
+    if (firebase.apps?.length) { firebase.app(); } else { firebase.initializeApp(firebaseConfig); }
     const storage = firebase.storage();
 
-    // Toast helper
+    // 3) Toast helper
     const toast = (msg) => {
       const el = document.getElementById('toast');
+      if (!el) return alert(msg);
       el.textContent = msg;
       el.classList.add('show');
       clearTimeout(window.__toastTimer);
       window.__toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
     };
 
-    // Subida genérica
+    // 4) Subida genérica con metadatos + control de tamaño
     async function uploadFile(file, folder){
       if (!file) return;
 
-      const maxMB = 25;
+      const maxMB = 25; // ajustable
       if (file.size > maxMB * 1024 * 1024) {
         toast(`El archivo supera ${maxMB} MB.`);
         return;
@@ -79,25 +77,26 @@
 
       try {
         toast('Subiendo… Por favor espera');
-        await ref.put(file);
+        // metadatos: mejor compatibilidad con HEIC/QuickTime
+        await ref.put(file, { contentType: file.type || 'application/octet-stream' });
         toast('¡Gracias por compartir este momento con nosotros 💖!');
       } catch (err) {
-        console.error(err);
-        toast('Error al subir. Vuelve a intentarlo.');
+        console.error('UPLOAD ERROR:', err.code, err.message);
+        toast(`Error al subir (${err.code || 'desconocido'}). Revisa permisos/tamaño.`);
       }
     }
 
-    // Bind botones → inputs
+    // 5) Enlazar botones → inputs (IDs existentes)
     const inPhoto   = document.getElementById('inPhoto');
     const inVideo   = document.getElementById('inVideo');
     const inGallery = document.getElementById('inGallery');
 
-    document.getElementById('btnPhoto').addEventListener('click',  () => inPhoto.click());
-    document.getElementById('btnVideo').addEventListener('click',  () => inVideo.click());
-    document.getElementById('btnGallery').addEventListener('click',() => inGallery.click());
+    document.getElementById('btnPhoto')  .addEventListener('click', () => inPhoto.click());
+    document.getElementById('btnVideo')  .addEventListener('click', () => inVideo.click());
+    document.getElementById('btnGallery').addEventListener('click', () => inGallery.click());
 
-    inPhoto.addEventListener('change',   (e) => uploadFile(e.target.files[0], 'fotos'));
-    inVideo.addEventListener('change',   (e) => uploadFile(e.target.files[0], 'videos'));
+    inPhoto  .addEventListener('change', (e) => uploadFile(e.target.files[0], 'fotos'));
+    inVideo  .addEventListener('change', (e) => uploadFile(e.target.files[0], 'videos'));
     inGallery.addEventListener('change', (e) => uploadFile(e.target.files[0], 'galeria'));
   </script>
 </body>
