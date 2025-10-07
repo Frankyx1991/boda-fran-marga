@@ -2,13 +2,13 @@
 html, body { margin:0; height:100%; font-family: Georgia, "Times New Roman", serif; }
 body { overflow:hidden; }
 
-/* --- Fondo con vuestra foto --- */
+/* --- Fondo (poned vuestra foto en assets/fondo.jpg) --- */
 .stage{
   min-height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  background-image:url('assets/fondo.jpg'); /* pon aquí vuestra imagen */
+  background-image:url('assets/fondo.jpg');
   background-size:cover;
   background-repeat:no-repeat;
   background-position:center 38%;
@@ -27,7 +27,7 @@ body { overflow:hidden; }
   flex-grow:1; margin-bottom:5rem;
 }
 
-/* --- Botones principales --- */
+/* --- Botones --- */
 .btn-primary{
   appearance:none; border:none; cursor:pointer; text-decoration:none;
   background:rgba(180,140,60,0.88);
@@ -41,7 +41,7 @@ body { overflow:hidden; }
 .btn-primary:active{ transform:scale(.97); }
 .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
 
-/* --- Controles (fila en desktop, columna en móvil) --- */
+/* --- Controles: fila en escritorio, columna en móvil --- */
 .controls{
   display:flex; gap:1rem; justify-content:center; align-items:center;
   margin: 0 1rem 2.75rem;
