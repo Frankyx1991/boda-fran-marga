@@ -1,171 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fran & Marga — Galería</title>
-  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fran & Marga — Galería</title>
 
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: url('https://raw.githubusercontent.com/Frankyx1991/boda-fran-marga/main/assets/fondo.jpg') no-repeat center center fixed;
-      background-size: cover;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-family: "Georgia", serif;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-    }
-    h1 {
-      font-size: 2.2em;
-      margin-bottom: 0.2em;
-    }
-    h2 {
-      margin: 0;
-      font-size: 1.3em;
-      font-weight: normal;
-    }
-    .buttons {
-      margin-top: 1.8em;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    button {
-      padding: 0.7em 1.4em;
-      border: none;
-      background-color: rgba(145, 107, 34, 0.85);
-      color: white;
-      font-size: 1em;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    button:hover {
-      background-color: rgba(120, 85, 28, 0.95);
-    }
-    #progressContainer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      color: white;
-      font-size: 1.2em;
-    }
-    #progressBar {
-      width: 80%;
-      height: 8px;
-      background: rgba(255,255,255,0.2);
-      margin-top: 10px;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    #progress {
-      height: 100%;
-      background: white;
-      width: 0%;
-      transition: width 0.3s;
-    }
-  </style>
+<!-- Firebase COMPAT v9.22.0 (no modular v10) -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+<style>
+  :root { --gold:#a47c3c; --gold2:#c59745 }
+  html,body{height:100%;margin:0}
+  body{
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    background:url('assets/fondo.jpg') center 30%/cover no-repeat fixed;
+    color:#fff;font-family:Georgia,serif;text-align:center;
+    text-shadow:0 2px 8px rgba(0,0,0,.6);
+  }
+  h1{font-size:2.2rem;margin:0}
+  .date{margin:.2rem 0 1rem;font-size:1.1rem}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .btn{padding:.7rem 1.2rem;border:0;border-radius:12px;background:var(--gold);
+       color:#fff;cursor:pointer;transition:.2s;font-size:1rem}
+  .btn:hover{background:var(--gold2)}
+  /* overlay progreso */
+  #uploader{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;
+            justify-content:center;align-items:center;flex-direction:column;z-index:10}
+  #bar{width:80%;height:10px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.3);margin:10px 0}
+  #fill{height:100%;width:0;background:#f0d88a}
+  #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
+         background:rgba(0,0,0,.75);padding:10px 16px;border-radius:10px;opacity:0;transition:.25s}
+  #toast.show{opacity:1}
+</style>
 </head>
 <body>
-  <h1>Fran & Marga</h1>
-  <h2>11/10/2025</h2>
+  <h1>Fran &amp; Marga</h1>
+  <div class="date">11/10/2025</div>
 
-  <div class="buttons">
-    <button onclick="takePhoto()">📸 Tomar foto</button>
-    <button onclick="recordVideo()">🎥 Grabar vídeo</button>
-    <button onclick="uploadFromGallery()">🖼️ Subir desde galería</button>
+  <div class="row">
+    <button class="btn" id="btnPhoto">📷 Tomar foto</button>
+    <button class="btn" id="btnVideo">🎥 Grabar vídeo</button>
+    <button class="btn" id="btnGallery">🖼️ Subir desde galería</button>
   </div>
 
-  <div id="progressContainer">
-    <div>Subiendo...<span id="percent"></span></div>
-    <div id="progressBar"><div id="progress"></div></div>
-    <p>No cierres esta página</p>
+  <!-- inputs ocultos -->
+  <input id="inPhoto"   type="file" accept="image/*" capture="environment" hidden>
+  <input id="inVideo"   type="file" accept="video/*" capture="camcorder" hidden>
+  <input id="inGallery" type="file" accept="image/*,video/*" hidden>
+
+  <!-- overlay progreso -->
+  <div id="uploader">
+    <div>Subiendo...</div>
+    <div id="bar"><div id="fill"></div></div>
+    <div id="pct">0%</div>
+    <div>No cierres esta página</div>
   </div>
+  <div id="toast"></div>
 
-  <script>
-    // --- CONFIGURACIÓN FIREBASE ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyCnkjY4-MceKRyLmQlMVaA39hUIQ6nMVO8",
-      authDomain: "boda-fran-marga-live.firebaseapp.com",
-      projectId: "boda-fran-marga-live",
-      storageBucket: "boda-fran-marga-live.appspot.com",
-      messagingSenderId: "945235222189",
-      appId: "1:945235222189:web:ed972fab8e98620d21b024"
-    };
+<script>
+  // *** CONFIG FIREBASE (bucket appspot.com) ***
+  const firebaseConfig = {
+    apiKey: "AIzaSyCnkjY4-MceKRyLmQlMVaA39hUIQ6nMVO8",
+    authDomain: "boda-fran-marga-live.firebaseapp.com",
+    projectId: "boda-fran-marga-live",
+    storageBucket: "boda-fran-marga-live.appspot.com", // <- IMPORTANTE
+    messagingSenderId: "945235222189",
+    appId: "1:945235222189:web:ed972fab8e98620d21b024"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const storage = firebase.storage();
 
-    const app = firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage();
+  // utilidades UI
+  const $ = s => document.querySelector(s);
+  const toast = m => { const t=$("#toast"); t.textContent=m; t.classList.add("show");
+    clearTimeout(window.__t); window.__t=setTimeout(()=>t.classList.remove("show"), 4000); };
+  const showUp = on => { $("#uploader").style.display = on ? "flex" : "none"; };
+  const setPct = p => { $("#fill").style.width = p+"%"; $("#pct").textContent = p+"%"; };
 
-    // --- FUNCIÓN GENERAL DE SUBIDA ---
-    async function uploadFile(file) {
-      if (!file) return;
-      const ref = storage.ref(`boda-fran-marga/${Date.now()}-${file.name}`);
-      const uploadTask = ref.put(file);
+  // Deducir contentType cuando el navegador no lo envía
+  function guessType(name, type){
+    if (type) return type;
+    const n = (name||'').toLowerCase();
+    if (n.endsWith('.jpg')||n.endsWith('.jpeg')) return 'image/jpeg';
+    if (n.endsWith('.png'))  return 'image/png';
+    if (n.endsWith('.webp')) return 'image/webp';
+    if (n.endsWith('.gif'))  return 'image/gif';
+    if (n.endsWith('.heic')) return 'image/heic';
+    if (n.endsWith('.mp4'))  return 'video/mp4';
+    if (n.endsWith('.mov'))  return 'video/quicktime';
+    return 'application/octet-stream';
+  }
 
-      const progressContainer = document.getElementById("progressContainer");
-      const progressBar = document.getElementById("progress");
-      const percentText = document.getElementById("percent");
-      progressContainer.style.display = "flex";
+  async function upload(file, folder){
+    if(!file){ toast("No se seleccionó archivo"); return; }
+    const ts   = new Date().toISOString().replace(/[:.]/g,'-');
+    const safe = (file.name||'archivo').replace(/\s+/g,'_');
+    const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safe}`;
+    const ref  = storage.ref().child(path);
+    const meta = { contentType: guessType(file.name, file.type) };
 
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          progressBar.style.width = progress + "%";
-          percentText.innerText = ` ${Math.round(progress)}%`;
-        }, 
-        (error) => {
-          alert("Error al subir: " + error.message);
-          progressContainer.style.display = "none";
-        }, 
-        () => {
-          progressContainer.style.display = "none";
-          alert("¡Gracias por compartir este momento con nosotros!");
-        }
-      );
+    showUp(true); setPct(0);
+
+    try {
+      const task = ref.put(file, meta);
+      let progressed = false;
+
+      const watchdog = setTimeout(()=>{ 
+        if(!progressed) toast("Sin progreso… revisa conexión o reglas"); 
+      }, 8000);
+
+      await new Promise((res,rej)=>{
+        task.on('state_changed',
+          s=>{ progressed = true; setPct(Math.round(100*s.bytesTransferred/s.totalBytes)); },
+          e=>rej(e),
+          ()=>res()
+        );
+      });
+      clearTimeout(watchdog);
+      setPct(100);
+      toast("✅ ¡Gracias por compartir este momento con nosotros!");
+    } catch(e){
+      console.error(e);
+      toast(`❌ Error al subir: ${e.code||''} ${e.message||e}`);
+    } finally {
+      setTimeout(()=>showUp(false), 600);
     }
+  }
 
-    function takePhoto() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.capture = 'camera';
-      input.onchange = e => uploadFile(e.target.files[0]);
-      input.click();
-    }
+  // eventos
+  $("#btnPhoto").onclick   = ()=> $("#inPhoto").click();
+  $("#btnVideo").onclick   = ()=> $("#inVideo").click();
+  $("#btnGallery").onclick = ()=> $("#inGallery").click();
 
-    function recordVideo() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'video/*';
-      input.capture = 'camcorder';
-      input.onchange = e => uploadFile(e.target.files[0]);
-      input.click();
-    }
+  $("#inPhoto").onchange   = e => upload(e.target.files[0], 'fotos');
+  $("#inVideo").onchange   = e => upload(e.target.files[0], 'videos');
+  $("#inGallery").onchange = e => upload(e.target.files[0], 'galeria');
 
-    function uploadFromGallery() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*,video/*';
-      input.onchange = e => uploadFile(e.target.files[0]);
-      input.click();
-    }
-  </script>
+  // Captura errores JS para que no “parezca” que no hace nada
+  window.addEventListener('error', ev => toast('JS: '+ev.message));
+</script>
 </body>
 </html>
