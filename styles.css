@@ -2,7 +2,7 @@ html, body { margin: 0; height: 100%; font-family: 'Georgia', serif; }
 body { overflow: hidden; }
 
 /* Fondo */
-.stage{
+.stage {
   background-image: url('assets/fondo.jpg');
   background-position: center 38%;
   background-size: cover;
@@ -14,44 +14,46 @@ body { overflow: hidden; }
   justify-content: space-between;
 }
 
-/* Título */
-.overlay{
+/* Encabezado */
+.overlay {
   text-align: center;
   color: #fff;
   text-shadow: 0 2px 18px rgba(0,0,0,.55);
   margin-top: 2rem;
 }
-.overlay h1{ font-size: clamp(2rem, 7vw, 3.5rem); margin: 0; }
-.overlay .date{ font-size: 1.1rem; margin: .3rem 0; }
-.overlay .subtitle{ font-size: 1rem; margin-top: .3rem; }
+.overlay h1 { font-size: clamp(2rem, 7vw, 3.5rem); margin: 0; }
+.overlay .date { font-size: 1.1rem; margin: .3rem 0; }
+.overlay .subtitle { font-size: 1rem; margin-top: .3rem; }
 
-/* Botón principal */
-.btn-primary{
+/* Botones generales */
+.btn-primary {
   background: rgba(180,140,60,0.85);
   color: #fff;
-  padding: 12px 24px;
+  padding: 12px 28px;
   border: none;
   border-radius: 14px;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: bold;
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   text-shadow: 0 1px 3px rgba(0,0,0,0.45);
   text-decoration: none;
   transition: transform 0.1s ease, background 0.2s ease;
+  cursor: pointer;
 }
-.btn-primary:hover{ background: rgba(180,140,60,0.95); }
-.btn-primary:active{ transform: scale(0.97); }
+.btn-primary:hover { background: rgba(180,140,60,0.95); }
+.btn-primary:active { transform: scale(0.97); }
 
-/* Centrado del botón “Entrar” */
-.center-cta{
+/* Centrado del botón principal */
+.center-cta {
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-bottom: 3rem;
+  align-items: flex-end; /* 🔹 Lo baja un poco más */
+  flex-grow: 1;
+  margin-bottom: 5rem;   /* 🔹 Más espacio inferior */
 }
 
-/* Controles */
-.controls{
+/* Controles (botones de galería) */
+.controls {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -59,8 +61,17 @@ body { overflow: hidden; }
   margin-bottom: 3rem;
 }
 
+/* ✅ En pantallas grandes, botones en fila */
+@media (min-width: 768px) {
+  .controls {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
+}
+
 /* Toast */
-.toast{
+.toast {
   position: fixed;
   left: 50%;
   bottom: 70px;
@@ -73,4 +84,4 @@ body { overflow: hidden; }
   opacity: 0;
   transition: opacity .3s;
 }
-.toast.show{ opacity: 1; }
+.toast.show { opacity: 1; }
