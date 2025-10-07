@@ -12,27 +12,14 @@ body { overflow: hidden; }
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: relative; /* para el ::after */
 }
 
-/* Gradiente inferior – no intercepta clics */
-.stage::after {
-  content: "";
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  height: 30vh;
-  background: linear-gradient(to top, rgba(0,0,0,.4) 0%, rgba(0,0,0,0) 100%);
-  pointer-events: none;  /* 🔴 clave: que no bloquee clics */
-}
-
-/* Encabezado — por encima del gradiente */
+/* Encabezado */
 .overlay {
   text-align: center;
   color: #fff;
   text-shadow: 0 2px 18px rgba(0,0,0,.55);
   margin-top: 2rem;
-  position: relative;
-  z-index: 2;
 }
 .overlay h1 { font-size: clamp(2rem, 7vw, 3.5rem); margin: 0; }
 .overlay .date { font-size: 1.1rem; margin: .3rem 0; }
@@ -42,33 +29,28 @@ body { overflow: hidden; }
 .btn-primary {
   background: rgba(180,140,60,0.85);
   color: #fff;
-  padding: 12px 28px;
+  padding: 12px 24px;
   border: none;
   border-radius: 14px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: bold;
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
   text-shadow: 0 1px 3px rgba(0,0,0,0.45);
   text-decoration: none;
-  transition: transform 0.1s ease, background 0.2s ease;
+  transition: transform 0.1s ease, background 0.2s ease, opacity .2s ease;
   cursor: pointer;
-  position: relative;
-  z-index: 3;           /* 🔴 por encima de todo */
-  pointer-events: auto; /* 🔴 asegura click */
 }
 .btn-primary:hover { background: rgba(180,140,60,0.95); }
 .btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
 
-/* Botón Entrar más abajo y clickeable seguro */
+/* Botón principal centrado (en index) */
 .center-cta {
   display: flex;
   justify-content: center;
   align-items: flex-end;
   flex-grow: 1;
-  margin-bottom: 6rem;
-  position: relative;
-  z-index: 3;           /* 🔴 por encima de overlays */
-  pointer-events: auto; /* 🔴 asegura click */
+  margin-bottom: 5rem;
 }
 
 /* Controles (galería) */
@@ -78,12 +60,15 @@ body { overflow: hidden; }
   gap: 1rem;
   align-items: center;
   margin-bottom: 3rem;
-  position: relative;
-  z-index: 3;
-  pointer-events: auto;
 }
+
+/* En pantallas grandes, botones en fila */
 @media (min-width: 768px) {
-  .controls { flex-direction: row; justify-content: center; gap: 2rem; }
+  .controls {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
 }
 
 /* Toast */
@@ -99,6 +84,46 @@ body { overflow: hidden; }
   font-size: 0.9rem;
   opacity: 0;
   transition: opacity .3s;
-  z-index: 4;
 }
 .toast.show { opacity: 1; }
+
+/* ======= Uploader (overlay con barra de progreso) ======= */
+.uploader {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(2px);
+  z-index: 50;
+}
+.uploader[hidden] { display: none; }
+
+.uploader-box {
+  min-width: 260px;
+  max-width: 90vw;
+  background: rgba(20,20,20,0.85);
+  color: #fff;
+  padding: 18px 16px;
+  border-radius: 14px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.35);
+  text-align: center;
+}
+.uploader-title { margin: 0 0 10px 0; font-weight: 700; }
+.bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.25);
+}
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #f3d08a, #d1a14a);
+  border-radius: 999px;
+  transition: width .2s ease;
+}
+.uploader-percent { margin: 10px 0 0 0; font-weight: 700; }
+.uploader-tip { margin: 6px 0 0 0; opacity: .85; font-size: .9rem; }
