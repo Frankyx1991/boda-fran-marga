@@ -13,16 +13,16 @@
       <p class="date">11/10/2025</p>
     </header>
 
-    <div class="controls">
+    <nav class="controls" aria-label="Acciones de subida">
       <button id="btnPhoto"   class="btn-primary">📷 Tomar foto</button>
       <button id="btnVideo"   class="btn-primary">🎥 Grabar vídeo</button>
       <button id="btnGallery" class="btn-primary">🖼️ Subir desde galería</button>
-    </div>
+    </nav>
 
     <!-- Inputs ocultos -->
-    <input id="inPhoto"   type="file" accept="image/*"        capture="environment" hidden>
-    <input id="inVideo"   type="file" accept="video/*"        capture="camcorder"   hidden>
-    <input id="inGallery" type="file" accept="image/*,video/*"                      hidden>
+    <input id="inPhoto"   type="file" accept="image/*" capture="environment" hidden>
+    <input id="inVideo"   type="file" accept="video/*" capture="camcorder"   hidden>
+    <input id="inGallery" type="file" accept="image/*,video/*"               hidden>
 
     <!-- Toast -->
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -38,17 +38,17 @@
     </div>
   </main>
 
-  <!-- Firebase (compat) -->
+  <!-- Firebase (compat, simple) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
   <script>
-    // Config de tu proyecto (verificada)
+    // Config de tu proyecto
     const firebaseConfig = {
       apiKey: "AIzaSyCnkjY4-MceKRyLmQlMVaA39hUIQ6nMVO8",
       authDomain: "boda-fran-marga-live.firebaseapp.com",
       projectId: "boda-fran-marga-live",
-      storageBucket: "boda-fran-marga-live.appspot.com", // <- importante
+      storageBucket: "boda-fran-marga-live.appspot.com",   // <- importante
       messagingSenderId: "945235222189",
       appId: "1:945235222189:web:ed972fab8e98620d21b024"
     };
@@ -61,38 +61,41 @@
     const $  = s => document.querySelector(s);
     const $$ = s => Array.from(document.querySelectorAll(s));
     const toast = (m)=>{ const t=$('#toast'); t.textContent=m; t.classList.add('show');
-      clearTimeout(window.__t); window.__t=setTimeout(()=>t.classList.remove('show'),3500); };
+      clearTimeout(window.__t); window.__t=setTimeout(()=>t.classList.remove('show'), 3200); };
     const setControlsEnabled = (on)=> $$('.btn-primary').forEach(b=>b.disabled=!on);
     const showUploader = (on)=>{ const u=$('#uploader'); u.hidden=!on;
       if(on){ $('#barFill').style.width='0%'; $('#pct').textContent='0'; } };
     const setProgress = (p)=>{ $('#barFill').style.width=p+'%'; $('#pct').textContent=p; };
 
-    // Subida con progreso (solo 'create', no leer/listar nada)
+    // Subida con progreso (solo 'create' en rutas permitidas por reglas)
     async function uploadToFirebase(file, folder){
       if(!file) return;
-      const now  = new Date();
-      const ts   = now.toISOString().replace(/[:.]/g,'-');
+      const ts   = new Date().toISOString().replace(/[:.]/g,'-');
       const safe = (file.name || 'archivo').replace(/\s+/g,'_');
       const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safe}`;
       const ref  = storage.ref().child(path);
       const meta = { contentType: file.type || 'application/octet-stream' };
 
-      setControlsEnabled(false);
-      showUploader(true);
-      toast('Subiendo… Por favor espera');
+      setControlsEnabled(false); showUploader(true); toast('Subiendo…');
 
       await new Promise((resolve, reject) => {
         const task = ref.put(file, meta);
         task.on('state_changed',
-          (snap)=>{ const pct=Math.round((snap.bytesTransferred/snap.totalBytes)*100); setProgress(pct); },
-          (err)=>{ console.error(err); toast('Error al subir. Vuelve a intentarlo.'); showUploader(false); setControlsEnabled(true); reject(err); },
-          ()=>{ setProgress(100); showUploader(false); setControlsEnabled(true); toast('¡Gracias por compartir este momento con nosotros 💖!'); resolve(); }
+          snap => {
+            const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+            setProgress(pct);
+          },
+          err => { console.error(err); toast('❌ Error al subir. Inténtalo de nuevo.'); showUploader(false); setControlsEnabled(true); reject(err); },
+          ()  => { setProgress(100); showUploader(false); setControlsEnabled(true); toast('✅ ¡Gracias por compartir este momento con nosotros 💖!'); resolve(); }
         );
       });
     }
 
-    // Enlaza botones e inputs
-    const inPhoto=$('#inPhoto'), inVideo=$('#inVideo'), inGallery=$('#inGallery');
+    // Enlaza botones → inputs
+    const inPhoto   = $('#inPhoto');
+    const inVideo   = $('#inVideo');
+    const inGallery = $('#inGallery');
+
     $('#btnPhoto').onclick   = ()=> inPhoto.click();
     $('#btnVideo').onclick   = ()=> inVideo.click();
     $('#btnGallery').onclick = ()=> inGallery.click();
