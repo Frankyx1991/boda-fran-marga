@@ -4,26 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Fran & Marga — 11/10/2025</title>
-
-  <!-- Firebase -->
-  <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-
-  <!-- Estilos existentes -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="stage">
     <header class="overlay">
       <h1>Fran &amp; Marga</h1>
-      <p class="date">11/10/2025</p>
+    <p class="date">11/10/2025</p>
     </header>
 
     <nav class="controls" aria-label="Controles de subida">
-      <button id="btnPhoto" class="btn" type="button" aria-label="Tomar foto">📷 Tomar foto</button>
-      <button id="btnVideo" class="btn" type="button" aria-label="Grabar vídeo">🎥 Grabar vídeo</button>
-      <button id="btnGallery" class="btn" type="button" aria-label="Subir desde galería">🖼️ Subir desde galería</button>
+      <button id="btnPhoto" class="btn" type="button">📷 Tomar foto</button>
+      <button id="btnVideo" class="btn" type="button">🎥 Grabar vídeo</button>
+      <button id="btnGallery" class="btn" type="button">🖼️ Subir desde galería</button>
     </nav>
 
     <!-- Inputs ocultos -->
@@ -36,21 +29,10 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // 1) Config de tu proyecto (bucket correcto para Web)
-    const firebaseConfig = {
-      apiKey: "AIzaSyDfakTZefMtBjjBVU7r4VK5PdpCIiQB2eM",
-      authDomain: "boda-fran-marga.firebaseapp.com",
-      projectId: "boda-fran-marga",
-      storageBucket: "boda-fran-marga.appspot.com", // ← IMPORTANTE
-      messagingSenderId: "510120256743",
-      appId: "1:510120256743:web:0239fac8d47c2fbe77ae42"
-    };
+    // URL de tu Web App de Google Apps Script (ya creada)
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjFv7oIl0ae7ZJp54PuHrilCziwJKEzm-L963sNhF7E0vyDJ2eKjn9-6QAQIz3PcfjYQ/exec";
 
-    // 2) Inicializar una sola vez (por si vuelven desde la portada)
-    if (firebase.apps?.length) { firebase.app(); } else { firebase.initializeApp(firebaseConfig); }
-    const storage = firebase.storage();
-
-    // 3) Toast helper
+    // Mensajes flotantes
     const toast = (msg) => {
       const el = document.getElementById('toast');
       if (!el) return alert(msg);
@@ -60,33 +42,40 @@
       window.__toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
     };
 
-    // 4) Subida genérica con metadatos + control de tamaño
+    // Subida a Drive vía Apps Script
     async function uploadFile(file, folder){
       if (!file) return;
 
-      const maxMB = 25; // ajustable
+      const maxMB = 25;
       if (file.size > maxMB * 1024 * 1024) {
         toast(`El archivo supera ${maxMB} MB.`);
         return;
       }
 
-      const ts = new Date().toISOString().replace(/[:.]/g, '-');
-      const safeName = (file.name || 'archivo').replace(/\s+/g, '_');
-      const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safeName}`;
-      const ref  = storage.ref().child(path);
+      const form = new FormData();
+      form.append('file', file);      // el servidor lo recibe como e.files.file
+      form.append('folder', folder);  // 'fotos' | 'videos' | 'galeria'
+
+      toast('Subiendo… Por favor espera');
 
       try {
-        toast('Subiendo… Por favor espera');
-        // metadatos: mejor compatibilidad con HEIC/QuickTime
-        await ref.put(file, { contentType: file.type || 'application/octet-stream' });
+        // Si ves un aviso CORS en la consola, añade , mode:'no-cors' y no intentes leer JSON
+        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: form });
+
+        // Intentar leer respuesta (si CORS lo permite)
+        try {
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Error');
+        } catch (_) { /* En no-cors no hay JSON; la subida suele completarse igual */ }
+
         toast('¡Gracias por compartir este momento con nosotros 💖!');
       } catch (err) {
-        console.error('UPLOAD ERROR:', err.code, err.message);
-        toast(`Error al subir (${err.code || 'desconocido'}). Revisa permisos/tamaño.`);
+        console.error(err);
+        toast('Error al subir. Vuelve a intentarlo.');
       }
     }
 
-    // 5) Enlazar botones → inputs (IDs existentes)
+    // Enlazar botones → inputs
     const inPhoto   = document.getElementById('inPhoto');
     const inVideo   = document.getElementById('inVideo');
     const inGallery = document.getElementById('inGallery');
