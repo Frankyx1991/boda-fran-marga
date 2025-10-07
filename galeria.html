@@ -1,162 +1,151 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Fran & Marga — 11/10/2025</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fran & Marga — Galería</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url('images/portada.jpg') no-repeat center center/cover;
+    color: #fff;
+    font-family: 'Georgia', serif;
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(0,0,0,.6);
+  }
+  h1 { font-size: 2rem; margin: 0; }
+  h2 { font-weight: 400; margin: 6px 0 22px; }
+  .botones { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  button {
+    background: #a47c3c;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: .3s;
+  }
+  button:hover { background: #c59745; }
+  #uploader {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,.7); color: #fff;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 100;
+  }
+  #bar {
+    width: 80%; height: 10px;
+    background: rgba(255,255,255,.3);
+    border-radius: 8px; overflow: hidden; margin-top: 10px;
+  }
+  #barFill { background: #f0d88a; width: 0%; height: 100%; }
+  #toast {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,.7);
+    color: #fff; padding: 10px 20px; border-radius: 10px;
+    opacity: 0; transition: opacity .3s;
+  }
+  #toast.show { opacity: 1; }
+</style>
 </head>
 <body>
-  <main class="stage">
-    <header class="overlay">
-      <h1>Fran &amp; Marga</h1>
-      <p class="date">11/10/2025</p>
-    </header>
+  <h1>Fran & Marga</h1>
+  <h2>11/10/2025</h2>
 
-    <nav class="controls" aria-label="Acciones de subida">
-      <button id="btnPhoto"   class="btn-primary">📷 Tomar foto</button>
-      <button id="btnVideo"   class="btn-primary">🎥 Grabar vídeo</button>
-      <button id="btnGallery" class="btn-primary">🖼️ Subir desde galería</button>
-    </nav>
+  <div class="botones">
+    <button id="btnPhoto">📷 Tomar foto</button>
+    <button id="btnVideo">🎥 Grabar vídeo</button>
+    <button id="btnGallery">🖼️ Subir desde galería</button>
+  </div>
 
-    <!-- Inputs ocultos -->
-    <input id="inPhoto"   type="file" accept="image/*" capture="environment" hidden>
-    <input id="inVideo"   type="file" accept="video/*" capture="camcorder"   hidden>
-    <input id="inGallery" type="file" accept="image/*,video/*"               hidden>
+  <input type="file" accept="image/*" capture="environment" id="inPhoto" hidden>
+  <input type="file" accept="video/*" capture="user" id="inVideo" hidden>
+  <input type="file" accept="image/*,video/*" id="inGallery" hidden>
 
-    <!-- Toast -->
-    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="uploader" hidden>
+    <h3>Subiendo...</h3>
+    <div id="bar"><div id="barFill"></div></div>
+    <p id="pct">0%</p>
+    <p>No cierres esta página</p>
+  </div>
+  <div id="toast"></div>
 
-    <!-- PROGRESO -->
-    <div id="uploader" class="uploader" aria-live="polite" aria-label="Progreso de subida" hidden>
-      <div class="uploader-box">
-        <p class="uploader-title">Subiendo…</p>
-        <div class="bar"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
-        <p class="uploader-percent"><span id="pct">0</span>%</p>
-        <p class="uploader-tip">No cierres esta página</p>
-      </div>
-    </div>
-  </main>
-
-  <!-- Firebase (compat) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
   <script>
-    // ===== Config de tu proyecto (revisa el bucket: .appspot.com) =====
-    const firebaseConfig = {
-      apiKey: "AIzaSyCnkjY4-MceKRyLmQlMVaA39hUIQ6nMVO8",
-      authDomain: "boda-fran-marga-live.firebaseapp.com",
-      projectId: "boda-fran-marga-live",
-      storageBucket: "boda-fran-marga-live.appspot.com",
-      messagingSenderId: "945235222189",
-      appId: "1:945235222189:web:ed972fab8e98620d21b024"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage();
+  const firebaseConfig = {
+    apiKey: "AIzaSyCnkjY4-MceKRyLmQlMVaA39hUIQ6nMVO8",
+    authDomain: "boda-fran-marga-live.firebaseapp.com",
+    projectId: "boda-fran-marga-live",
+    storageBucket: "boda-fran-marga-live.appspot.com",
+    messagingSenderId: "945235222189",
+    appId: "1:945235222189:web:ed972fab8e98620d21b024"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const storage = firebase.storage();
 
-    // ===== UI helpers =====
-    const $  = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
-    const toast = (m)=>{ const t=$('#toast'); t.textContent=m; t.classList.add('show');
-      clearTimeout(window.__t); window.__t=setTimeout(()=>t.classList.remove('show'), 4000); };
-    const setControlsEnabled = on => $$('.btn-primary').forEach(b=>b.disabled=!on);
-    const showUploader = on => { const u=$('#uploader'); u.hidden=!on;
-      if(on){ $('#barFill').style.width='0%'; $('#pct').textContent='0'; } };
-    const setProgress = p => { $('#barFill').style.width=p+'%'; $('#pct').textContent=p; };
+  const toast = (msg) => {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(window.toastTimer);
+    window.toastTimer = setTimeout(() => el.classList.remove('show'), 4000);
+  };
 
-    // ===== Deducción de MIME si el móvil no lo aporta =====
-    function guessContentType(file){
-      if (file.type) return file.type;
-      const n = (file.name||'').toLowerCase();
-      if (n.endsWith('.jpg')||n.endsWith('.jpeg')) return 'image/jpeg';
-      if (n.endsWith('.png'))  return 'image/png';
-      if (n.endsWith('.heic')) return 'image/heic';
-      if (n.endsWith('.webp')) return 'image/webp';
-      if (n.endsWith('.gif'))  return 'image/gif';
-      if (n.endsWith('.mp4'))  return 'video/mp4';
-      if (n.endsWith('.mov'))  return 'video/quicktime';
-      return 'application/octet-stream';
+  const showUploader = (show) => {
+    document.getElementById('uploader').hidden = !show;
+    if(show) document.getElementById('barFill').style.width = '0%';
+  };
+
+  const setProgress = (p) => {
+    document.getElementById('barFill').style.width = p + '%';
+    document.getElementById('pct').textContent = p + '%';
+  };
+
+  async function uploadFile(file, folder) {
+    if (!file) return toast("No se seleccionó ningún archivo.");
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const path = `boda-fran-marga/${folder}/${ts}_${file.name}`;
+    const ref = storage.ref(path);
+    const meta = { contentType: file.type || 'application/octet-stream' };
+    showUploader(true);
+
+    try {
+      const task = ref.put(file, meta);
+      task.on('state_changed', snap => {
+        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+        setProgress(pct);
+      });
+      await task;
+      toast('✅ ¡Gracias por compartir este momento con nosotros!');
+    } catch (err) {
+      console.error(err);
+      toast('❌ Error al subir: ' + (err.code || err.message));
+    } finally {
+      showUploader(false);
     }
+  }
 
-    // ===== Test diagnóstico si no avanza del 0% =====
-    async function testDiagnostico(){
-      try{
-        const dataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==";
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
-        const ts = new Date().toISOString().replace(/[:.]/g,'-');
-        const ref = storage.ref().child(`boda-fran-marga/diagnostico/${ts}_ping.png`);
-        await ref.put(blob, {contentType:'image/png'});
-        toast('Diagnóstico OK: conexión y reglas correctas ✅');
-        return true;
-      }catch(e){
-        console.error('Diagnóstico fallo:', e);
-        toast('Diagnóstico falló: ' + (e.code || e.message));
-        return false;
-      }
-    }
+  document.getElementById('btnPhoto').onclick   = () => inPhoto.click();
+  document.getElementById('btnVideo').onclick   = () => inVideo.click();
+  document.getElementById('btnGallery').onclick = () => inGallery.click();
 
-    // ===== Subida con progreso (rutas: /boda-fran-marga/**) =====
-    async function uploadToFirebase(file, folder){
-      if(!file){ toast('Selecciona un archivo.'); return; }
+  const inPhoto = document.getElementById('inPhoto');
+  const inVideo = document.getElementById('inVideo');
+  const inGallery = document.getElementById('inGallery');
 
-      const ts   = new Date().toISOString().replace(/[:.]/g,'-');
-      const safe = (file.name || 'archivo').replace(/\s+/g,'_');
-      const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safe}`;
-      const ref  = storage.ref().child(path);
-      const meta = { contentType: guessContentType(file) };
-
-      let watchdog;
-      try{
-        setControlsEnabled(false); showUploader(true); toast('Subiendo…');
-
-        const task = ref.put(file, meta);
-
-        // Si en 8s no se mueve del 0%, lanza diagnóstico
-        watchdog = setTimeout(async ()=>{
-          const pctText = document.getElementById('pct').textContent;
-          if (pctText === '0') {
-            toast('Sin progreso… probando diagnóstico ⚙️');
-            await testDiagnostico();
-          }
-        }, 8000);
-
-        await new Promise((resolve, reject)=>{
-          task.on('state_changed',
-            snap => { const pct = Math.round((snap.bytesTransferred/snap.totalBytes)*100); setProgress(pct); },
-            err  => reject(err),
-            ()   => resolve()
-          );
-        });
-
-        setProgress(100);
-        toast('✅ ¡Gracias por compartir este momento con nosotros!');
-      }catch(err){
-        console.error('Upload error:', err);
-        let msg = '❌ Error al subir';
-        if (err && err.code) msg += ` (${err.code})`;
-        if (err && err.message) msg += ` — ${err.message}`;
-        toast(msg);
-      }finally{
-        clearTimeout(watchdog);
-        showUploader(false);
-        setControlsEnabled(true);
-      }
-    }
-
-    // ===== Enlaza botones → inputs =====
-    const inPhoto   = document.getElementById('inPhoto');
-    const inVideo   = document.getElementById('inVideo');
-    const inGallery = document.getElementById('inGallery');
-
-    document.getElementById('btnPhoto')  .onclick = ()=> inPhoto.click();
-    document.getElementById('btnVideo')  .onclick = ()=> inVideo.click();
-    document.getElementById('btnGallery').onclick = ()=> inGallery.click();
-
-    inPhoto.onchange   = e => uploadToFirebase(e.target.files[0], 'fotos');
-    inVideo.onchange   = e => uploadToFirebase(e.target.files[0], 'videos');
-    inGallery.onchange = e => uploadToFirebase(e.target.files[0], 'galeria');
+  inPhoto.onchange   = e => uploadFile(e.target.files[0], 'fotos');
+  inVideo.onchange   = e => uploadFile(e.target.files[0], 'videos');
+  inGallery.onchange = e => uploadFile(e.target.files[0], 'galeria');
   </script>
 </body>
 </html>
