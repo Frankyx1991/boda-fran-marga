@@ -2,165 +2,45 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Fran & Marga — 11/10/2025</title>
-  <meta name="description" content="Pulsa para entrar y compartir este día con nosotros." />
-  <meta name="theme-color" content="#111" />
-  <style>
-    :root{ --pad:clamp(12px,3vw,24px); --title:clamp(28px,6vw,72px); --subtitle:clamp(16px,3.2vw,28px); --body:clamp(14px,2.8vw,18px); --btn:clamp(14px,3.4vw,18px); }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial; color:#fff; background:#000}
-    .hero{position:relative; height:100%; overflow:hidden; display:grid; place-items:stretch; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-    .bg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; filter:brightness(.9) contrast(1.05); transform:scale(1.02)}
-    .overlay-top,.overlay-bottom{position:absolute; left:0; right:0; pointer-events:none}
-    .overlay-top{top:0; height:38%; background:linear-gradient(to bottom, rgba(0,0,0,.65), rgba(0,0,0,0))}
-    .overlay-bottom{bottom:0; height:45%; background:linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,0))}
-    .heading{position:absolute; left:50%; transform:translateX(-50%); width:min(92vw,1000px); padding:0 var(--pad); text-align:center}
-    .heading h1{margin:0 0 8px 0; font-size:var(--title); line-height:1.05; letter-spacing:.02em; font-weight:700; text-shadow:0 2px 16px rgba(0,0,0,.65)}
-    .heading p{margin:0; font-size:var(--subtitle); opacity:.95; text-shadow:0 2px 12px rgba(0,0,0,.6)}
-    .screen{position:relative; z-index:2; height:100%; display:flex; flex-direction:column; align-items:center; gap:clamp(12px,2.5vh,20px); padding:calc(var(--pad)*1.5) var(--pad)}
-    .screen[data-screen="landing"]{justify-content:flex-end}
-    .screen[data-screen="upload"]{justify-content:flex-end}
-    .heading--landing{top:max(8vh,24px)}
-    .heading--upload{top:max(5vh,16px)}
-    .heading--upload h1{font-size:clamp(22px,5vw,44px)} .heading--upload p{font-size:clamp(14px,2.6vw,18px)}
-    .tagline{font-size:var(--body); max-width:min(92vw,720px); text-shadow:0 2px 10px rgba(0,0,0,.6); text-align:center}
-    .cta,.u-btn{display:inline-block; font-size:var(--btn); font-weight:700; text-decoration:none; color:#111; background:#fff; padding:14px 22px; border-radius:999px; box-shadow:0 10px 30px rgba(0,0,0,.35); transition:transform .12s ease, box-shadow .12s ease; border:0; cursor:pointer}
-    .cta:active,.u-btn:active{transform:translateY(1px); box-shadow:0 8px 20px rgba(0,0,0,.35)}
-    .u-grid{display:grid; grid-template-columns:1fr; gap:12px; width:min(92vw,560px)}
-    @media (min-width:560px){ .u-grid{grid-template-columns:1fr 1fr 1fr} }
-    .u-note{font-size:clamp(12px,2.6vw,14px); opacity:.95; text-align:center; max-width:min(92vw,640px); margin-top:4px}
-    .uploads{width:min(92vw,680px); max-height:34vh; overflow:auto; padding:8px; border-radius:16px}
-    .u-item{background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:10px 12px; margin:6px 0}
-    .u-item h4{margin:0 0 6px 0; font-size:14px; font-weight:600; display:flex; justify-content:space-between; gap:10px}
-    progress{width:100%; height:10px}
-    .toast{position:fixed; left:50%; bottom:max(22px, env(safe-area-inset-bottom)); transform:translateX(-50%); background:#111; color:#fff; padding:12px 16px; border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:opacity .2s ease}
-    .toast.show{opacity:1}
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boda Fran & Marga – Uploader</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="hero" role="banner" aria-label="Portada Fran y Marga">
-    <img class="bg" src="portada.jpg" alt="Pareja al atardecer" />
-    <div class="overlay-top"></div><div class="overlay-bottom"></div>
-
-    <!-- Pantalla 1 -->
-    <header class="heading heading--landing" id="headingLanding">
-      <h1>Fran &amp; Marga</h1><p>11/10/2025</p>
+  <main class="container">
+    <header>
+      <h1>Boda Fran & Marga</h1>
+      <p>Sube tus fotos y vídeos directamente a nuestro álbum en Drive 📸</p>
     </header>
-    <section class="screen" data-screen="landing" id="screenLanding">
-      <p class="tagline">Pulsa para entrar y compartir este día con nosotros</p>
-      <a class="cta" href="#entrar" id="enterBtn" role="button" aria-label="Entrar">Entrar</a>
-    </section>
 
-    <!-- Pantalla 2 -->
-    <header class="heading heading--upload" id="headingUpload" hidden>
-      <h1>Fran &amp; Marga</h1><p>11/10/2025</p>
-    </header>
-    <section class="screen" data-screen="upload" id="screenUpload" hidden aria-live="polite">
-      <div class="u-grid" role="group" aria-label="Opciones de subida">
-        <button class="u-btn" id="btnFoto">Sube tu foto</button>
-        <button class="u-btn" id="btnVideo">Sube tu video</button>
-        <button class="u-btn" id="btnGaleria">Subir de galería</button>
+    <section class="card">
+      <label for="webAppUrl">Endpoint (Apps Script Web App)</label>
+      <input id="webAppUrl" type="url" placeholder="https://script.google.com/macros/s/XXXXX/exec" />
+
+      <div class="grid">
+        <div>
+          <label for="secret">Token de seguridad</label>
+          <input id="secret" type="password" placeholder="Tu token secreto" />
+        </div>
+        <div>
+          <label for="album">Código/Álbum (opcional)</label>
+          <input id="album" type="text" placeholder="p.ej. mesa-queen o QR-123" />
+        </div>
       </div>
-      <p class="u-note">No cierres esta pantalla hasta que el progreso llegue al 100%.</p>
-      <div class="uploads" id="uploads"></div>
 
-      <!-- Inputs nativos -->
-      <input type="file" id="inFoto" accept="image/*" capture="environment" hidden>
-      <input type="file" id="inVideo" accept="video/*" capture hidden>
-      <input type="file" id="inGaleria" accept="image/*,video/*" multiple hidden>
+      <label for="files">Selecciona archivos</label>
+      <input id="files" type="file" accept="image/*,video/*" multiple />
+
+      <button id="uploadBtn">Subir</button>
+
+      <div id="status" class="status"></div>
+      <ul id="results" class="results"></ul>
     </section>
+
+    <footer>
+      <small>Boda Fran & Marga – 11 Oct 2025 💍</small>
+    </footer>
   </main>
-  <div class="toast" id="toast">Gracias por compartir tu momento con nosotros ✨</div>
-
-  <!-- Firebase SDK (modular) -->
-  <script type="module">
-    // Config de tu proyecto Firebase — boda-60719 (bucket corregido)
-    const firebaseConfig = {
-      apiKey: "AIzaSyAhAfMkSSkSVF8BzqLanEbur5YUsQ_XGs4",
-      authDomain: "boda-60719.firebaseapp.com",
-      projectId: "boda-60719",
-      storageBucket: "boda-60719.appspot.com",
-      messagingSenderId: "868965732663",
-      appId: "1:868965732663:web:f25f905531ab7e9e844ab2"
-    };
-
-    // SDKs
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-    import { getStorage, ref, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-storage.js";
-
-    const app = initializeApp(firebaseConfig);
-    const storage = getStorage(app);
-
-    // Navegación
-    const screenLanding = document.getElementById('screenLanding');
-    const screenUpload  = document.getElementById('screenUpload');
-    const headingLanding= document.getElementById('headingLanding');
-    const headingUpload = document.getElementById('headingUpload');
-
-    document.getElementById('enterBtn').addEventListener('click', (e)=>{
-      e.preventDefault();
-      headingLanding.hidden = true; screenLanding.hidden = true;
-      headingUpload.hidden = false; screenUpload.hidden = false;
-    });
-
-    // Inputs
-    const inFoto    = document.getElementById('inFoto');
-    const inVideo   = document.getElementById('inVideo');
-    const inGaleria = document.getElementById('inGaleria');
-    const uploads   = document.getElementById('uploads');
-
-    document.getElementById('btnFoto').onclick    = ()=> inFoto.click();
-    document.getElementById('btnVideo').onclick   = ()=> inVideo.click();
-    document.getElementById('btnGaleria').onclick = ()=> inGaleria.click();
-
-    inFoto.onchange    = ()=> handleFiles(inFoto.files);
-    inVideo.onchange   = ()=> handleFiles(inVideo.files);
-    inGaleria.onchange = ()=> handleFiles(inGaleria.files);
-
-    function handleFiles(fileList){
-      if(!fileList || !fileList.length) return;
-      [...fileList].forEach(file => uploadFile(file));
-      inFoto.value = inVideo.value = inGaleria.value = '';
-    }
-
-    function uploadFile(file){
-      // Carpeta autorizada por tus reglas de Storage
-      const path = `eventos/fran-marga/${Date.now()}_${file.name}`;
-      const storageRef = ref(storage, path);
-      const task = uploadBytesResumable(storageRef, file);
-
-      // UI
-      const item = document.createElement('div'); item.className='u-item';
-      const title = document.createElement('h4');
-      const lbl = document.createElement('span'); lbl.textContent = file.name;
-      const pct = document.createElement('span'); pct.textContent = '0%';
-      title.append(lbl, pct);
-      const bar = document.createElement('progress'); bar.max = 100; bar.value = 0;
-      item.append(title, bar); uploads.prepend(item);
-
-      task.on('state_changed',
-        (snap)=>{
-          const per = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-          bar.value = per; pct.textContent = per + '%';
-        },
-        (err)=>{
-          pct.textContent = 'Error';
-          alert('No se pudo subir: ' + err.message);
-        },
-        ()=>{
-          bar.value = 100; pct.textContent = '100%';
-          showToast('Gracias por compartir tu momento con nosotros ✨');
-        }
-      );
-    }
-
-    function showToast(msg){
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.classList.add('show');
-      setTimeout(()=> t.classList.remove('show'), 2600);
-    }
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
