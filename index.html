@@ -1,57 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Fran & Marga — 11/10/2025</title>
   <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: url('https://raw.githubusercontent.com/Frankyx1991/boda-fran-marga/main/assets/fondo.jpg') no-repeat center center fixed;
-      background-size: cover;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      color: white;
-      font-family: "Georgia", serif;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    :root { --gold:#a47c3c; --gold2:#c59745; }
+    html,body{height:100%;margin:0}
+    body{
+      display:flex;flex-direction:column;justify-content:center;align-items:center;
+      background:url('assets/fondo.jpg') center 30% / cover no-repeat fixed;
+      color:#fff;font-family:Georgia,serif;text-align:center;
+      text-shadow:0 2px 8px rgba(0,0,0,.6);
     }
-    h1 {
-      font-size: 2.8em;
-      margin-bottom: 0.1em;
-    }
-    h2 {
-      margin: 0;
-      font-size: 1.5em;
-      font-weight: normal;
-    }
-    p {
-      margin-top: 0.8em;
-      font-size: 1.1em;
-    }
-    button {
-      margin-top: 2em;
-      padding: 0.7em 2em;
-      border: none;
-      background-color: rgba(145, 107, 34, 0.85);
-      color: white;
-      font-size: 1.1em;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background-color: rgba(120, 85, 28, 0.95);
-    }
+    h1{font-size:2.6rem;margin:.2rem 0 0}
+    .date{margin:.2rem 0 1rem;font-size:1.2rem}
+    .lead{opacity:.95}
+    .btn{margin-top:1.2rem;padding:.8rem 2.2rem;border:0;border-radius:12px;cursor:pointer;
+         background:var(--gold);color:#fff;font-size:1.1rem;transition:.2s}
+    .btn:hover{background:var(--gold2)}
   </style>
 </head>
 <body>
-  <h1>Fran & Marga</h1>
-  <h2>11/10/2025</h2>
-  <p>Pulsa para entrar y compartir este día con nosotros</p>
-  <button onclick="window.location.href='galeria.html'">Entrar</button>
+  <h1>Fran &amp; Marga</h1>
+  <div class="date">11/10/2025</div>
+  <p class="lead">Pulsa para entrar y compartir este día con nosotros</p>
+  <button class="btn" onclick="location.href='galeria.html'">Entrar</button>
 </body>
 </html>
