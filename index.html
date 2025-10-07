@@ -1,46 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Boda Fran & Marga – Uploader</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fran & Marga – 11/10/2025</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-image: url('https://raw.githubusercontent.com/frankyx1991/boda-fran-marga/main/assets/fondo.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      text-align: center;
+      font-family: "Playfair Display", serif;
+      color: #fff;
+      backdrop-filter: brightness(0.7);
+    }
+
+    h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(0,0,0,0.6);
+      margin-bottom: 0.2em;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      text-shadow: 0 0 15px rgba(0,0,0,0.6);
+      margin-bottom: 2em;
+    }
+
+    button {
+      background: linear-gradient(135deg, #ffb6c1, #ff7f50);
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      padding: 14px 34px;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(255,192,203,0.8);
+    }
+  </style>
 </head>
 <body>
-  <main class="container">
-    <header>
-      <h1>Boda Fran & Marga</h1>
-      <p>Sube tus fotos y vídeos directamente a nuestro álbum en Drive 📸</p>
-    </header>
-
-    <section class="card">
-      <label for="webAppUrl">Endpoint (Apps Script Web App)</label>
-      <input id="webAppUrl" type="url" placeholder="https://script.google.com/macros/s/XXXXX/exec" />
-
-      <div class="grid">
-        <div>
-          <label for="secret">Token de seguridad</label>
-          <input id="secret" type="password" placeholder="Tu token secreto" />
-        </div>
-        <div>
-          <label for="album">Código/Álbum (opcional)</label>
-          <input id="album" type="text" placeholder="p.ej. mesa-queen o QR-123" />
-        </div>
-      </div>
-
-      <label for="files">Selecciona archivos</label>
-      <input id="files" type="file" accept="image/*,video/*" multiple />
-
-      <button id="uploadBtn">Subir</button>
-
-      <div id="status" class="status"></div>
-      <ul id="results" class="results"></ul>
-    </section>
-
-    <footer>
-      <small>Boda Fran & Marga – 11 Oct 2025 💍</small>
-    </footer>
-  </main>
-  <script src="app.js"></script>
+  <h1>Fran & Marga</h1>
+  <h2>11/10/2025</h2>
+  <button onclick="window.location.href='upload.html'">Entrar</button>
 </body>
 </html>
