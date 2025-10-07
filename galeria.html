@@ -3,37 +3,33 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Fran & Marga — 10/11/2025</title>
-  <link rel="stylesheet" href="/boda-fran-marga/styles.css" />
+  <title>Fran & Marga — 11/10/2025</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="stage">
     <header class="overlay">
       <h1>Fran &amp; Marga</h1>
-      <p class="date">10/11/2025</p>
+      <p class="date">11/10/2025</p>
     </header>
 
-    <nav class="controls" aria-label="Controles de subida">
-      <button id="btnPhoto"   class="btn" type="button">📷 Tomar foto</button>
-      <button id="btnVideo"   class="btn" type="button">🎥 Grabar vídeo</button>
-      <button id="btnGallery" class="btn" type="button">🖼️ Subir desde galería</button>
-    </nav>
+    <div class="controls">
+      <button id="btnPhoto" class="btn-primary">📷 Tomar foto</button>
+      <button id="btnVideo" class="btn-primary">🎥 Grabar vídeo</button>
+      <button id="btnGallery" class="btn-primary">🖼️ Subir desde galería</button>
+    </div>
 
-    <!-- Inputs ocultos -->
-    <input id="inPhoto"   type="file" accept="image/*"        capture="environment" hidden />
-    <input id="inVideo"   type="file" accept="video/*"        capture="camcorder"   hidden />
-    <input id="inGallery" type="file" accept="image/*,video/*"                     hidden />
+    <input id="inPhoto" type="file" accept="image/*" capture="environment" hidden>
+    <input id="inVideo" type="file" accept="video/*" capture="camcorder" hidden>
+    <input id="inGallery" type="file" accept="image/*,video/*" hidden>
 
-    <!-- Toast -->
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </main>
 
   <script>
-    // URL de tu Web App (Apps Script) para subir a Google Drive
     const APPS_SCRIPT_URL =
       "https://script.google.com/macros/s/AKfycbwjFv7oIl0ae7ZJp54PuHrilCziwJKEzm-L963sNhF7E0vyDJ2eKjn9-6QAQIz3PcfjYQ/exec";
 
-    // Utilidades UI
     const $ = (s) => document.querySelector(s);
     const toast = (msg) => {
       const el = $('#toast');
@@ -43,7 +39,6 @@
       window.__t = setTimeout(()=>el.classList.remove('show'), 3200);
     };
 
-    // Subida a Drive vía Apps Script
     async function uploadFile(file, folder){
       if(!file) return;
       const maxMB = 25;
@@ -51,16 +46,11 @@
 
       const form = new FormData();
       form.append('file', file);
-      form.append('folder', folder); // 'fotos' | 'videos' | 'galeria'
+      form.append('folder', folder);
 
       toast('Subiendo… Por favor espera');
       try{
-        // Si hubiera aviso CORS, podrías añadir ,mode:'no-cors' y no leer JSON
-        const res = await fetch(APPS_SCRIPT_URL, { method:'POST', body: form });
-        try {
-          const data = await res.json();
-          if(!data.ok) throw new Error(data.error || 'Error');
-        } catch(_) { /* en no-cors no hay JSON pero la subida se hace */ }
+        await fetch(APPS_SCRIPT_URL, { method:'POST', body: form, mode:'no-cors' });
         toast('¡Gracias por compartir este momento con nosotros 💖!');
       }catch(err){
         console.error(err);
@@ -68,7 +58,6 @@
       }
     }
 
-    // Enlaces botones → inputs
     const inPhoto = $('#inPhoto'), inVideo = $('#inVideo'), inGallery = $('#inGallery');
     $('#btnPhoto').onclick   = ()=> inPhoto.click();
     $('#btnVideo').onclick   = ()=> inVideo.click();
