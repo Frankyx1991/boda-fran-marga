@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test Storage</title>
+<style>
+  body { font-family: system-ui, Arial, sans-serif; padding: 16px; }
+  .ok { color: #0a8a3a; font-weight: 700; }
+  .err{ color: #b00020; font-weight: 700; white-space: pre-wrap; }
+  code{ background:#f6f6f6; padding:2px 6px; border-radius:6px; }
+</style>
+</head>
+<body>
+  <h1>Prueba rápida de Firebase Storage</h1>
+  <p>Resultado: <span id="res">subiendo…</span></p>
+  <p>Ruta destino: <code id="path"></code></p>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnkjY4-MceKRyLmQlMVaA39hUIQ6nMVO8",
+      authDomain: "boda-fran-marga-live.firebaseapp.com",
+      projectId: "boda-fran-marga-live",
+      storageBucket: "boda-fran-marga-live.appspot.com",
+      messagingSenderId: "945235222189",
+      appId: "1:945235222189:web:ed972fab8e98620d21b024"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+
+    (async () => {
+      const resEl = document.getElementById('res');
+      try{
+        const dataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==";
+        const blob = await (await fetch(dataUrl)).blob(); // image/png
+        const ts = new Date().toISOString().replace(/[:.]/g,'-');
+        const path = `boda-fran-marga/diagnostico/${ts}_ping.png`;
+        document.getElementById('path').textContent = path;
+        const ref = storage.ref().child(path);
+
+        await new Promise((resolve, reject)=>{
+          ref.put(blob, {contentType:'image/png'}).on('state_changed',
+            () => {},
+            err => reject(err),
+            ()  => resolve()
+          );
+        });
+
+        resEl.textContent = 'OK: subida de prueba completada ✅';
+        resEl.className = 'ok';
+      }catch(e){
+        console.error(e);
+        resEl.textContent = `ERROR: ${e.code || ''} — ${e.message || e}`;
+        resEl.className = 'err';
+      }
+    })();
+  </script>
+</body>
+</html>
