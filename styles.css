@@ -1,128 +1,47 @@
-:root { color-scheme: light; }
-* { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
-body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
-
-/* Fondo con vuestra foto centrada al 30% */
+html, body { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; }
 .stage {
-  position: relative;
   min-height: 100vh;
-  width: 100%;
-  background: url('assets/fondo-foto.jpg') center 30% / cover no-repeat fixed;
-  display: grid;
-  grid-template-rows: 1fr auto;
-}
-
-/* Cabecera superior */
-.overlay {
-  text-align: center;
-  padding: calc(env(safe-area-inset-top, 0) + 24px) 16px 8px;
-  color: #fff;
-  text-shadow: 0 2px 18px rgba(0,0,0,.55), 0 1px 0 rgba(0,0,0,.4);
-}
-.overlay h1 {
-  margin: 0;
-  font-size: clamp(30px, 7.5vw, 50px);
-  letter-spacing: .6px;
-  font-weight: 700;
-}
-.overlay .date, .overlay .subtitle {
-  margin: 8px 0 0;
-  font-size: clamp(16px, 4vw, 22px);
-  opacity: .97;
-}
-
-/* Sección central (botón Entrar) */
-.center-cta {
-  display: grid;
-  place-items: center;
-  padding: 20px 16px 32px;
-}
-
-/* === BOTONES (fondo dorado translúcido elegante) === */
-.btn-primary, .btn {
-  --gold-bg: rgba(180, 140, 60, 0.75);    /* Fondo dorado translúcido */
-  --gold-border: rgba(160, 120, 40, 0.95);/* Borde dorado */
-  --gold-text: #ffffff;                   /* Texto blanco */
-
-  border: 1px solid var(--gold-border);
-  background: var(--gold-bg);
-  color: var(--gold-text);
-  font-weight: 700;
-  border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.3);
-  backdrop-filter: blur(8px) saturate(1.1);
-  text-shadow: 0 1px 3px rgba(0,0,0,.45);
-  transition: transform .08s ease, background .2s ease, color .2s ease;
-}
-
-/* Botón principal (Entrar) */
-.btn-primary {
-  padding: 14px 22px;
-  font-size: clamp(16px, 4.2vw, 18px);
-  font-weight: 800;
-  text-decoration: none;
-}
-
-/* Efecto al pulsar */
-.btn-primary:active, .btn:active {
-  transform: scale(0.98);
-  background: rgba(180, 140, 60, 0.9);
-}
-
-/* Barra inferior (botones cámara/galería) */
-.controls {
-  position: sticky;
-  bottom: 0;
-  width: 100%;
-  padding: 10px 12px calc(env(safe-area-inset-bottom, 0) + 14px);
+  background: url('assets/fondo.jpg') center 30% / cover no-repeat fixed;
   display: flex;
-  gap: 10px;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  background: rgba(0, 0, 0, 0.15);
-  border-top: 1px solid rgba(255,255,255,0.1);
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  color: #fff;
 }
+.overlay { padding-top: 40px; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
+.overlay h1 { margin: 0; font-size: 2.8rem; font-weight: 700; }
+.overlay .date { margin: 8px 0; font-size: 1.3rem; }
 
-/* Botones inferiores */
-.btn {
-  flex: 1 1 auto;
-  padding: 12px 14px;
-  font-size: clamp(14px, 3.5vw, 16px);
+.center-cta { padding-bottom: 40px; }
+
+.btn, .btn-primary {
+  background: rgba(255,255,255,0.25);
+  border: 1px solid rgba(255,255,255,0.6);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 1rem;
+  padding: 12px 16px;
+  margin: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  text-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
+.btn:hover, .btn-primary:hover { background: rgba(255,255,255,0.35); }
+.controls { padding: 20px; }
 
-/* Toast (mensajes de estado) */
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(env(safe-area-inset-bottom, 0) + 76px);
+  bottom: 80px;
   transform: translateX(-50%);
-  background: rgba(0,0,0,.75);
+  background: rgba(0,0,0,0.75);
   color: #fff;
-  padding: 10px 14px;
+  padding: 10px 16px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 0.9rem;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .25s ease;
+  transition: opacity .3s;
 }
 .toast.show { opacity: 1; }
-
-/* === FORZAR TEXTO BLANCO EN TODOS LOS BOTONES === */
-.btn,
-.btn-primary {
-  color: #ffffff !important;
-  text-shadow: 0 1px 3px rgba(0,0,0,.45);
-}
-
-/* Asegurar también los estados de enlaces (Entrar) */
-.btn-primary:link,
-.btn-primary:visited,
-.btn-primary:hover,
-.btn-primary:active,
-.btn:link,
-.btn:visited,
-.btn:hover,
-.btn:active {
-  color: #ffffff !important;
-}
