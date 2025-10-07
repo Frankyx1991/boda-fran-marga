@@ -14,31 +14,9 @@
       <p class="subtitle">Pulsa para entrar y compartir este día con nosotros</p>
     </header>
 
-    <!-- Botón ENTRAR con enlace absoluto y fallback JS -->
     <section class="center-cta">
-      <a id="enterLink"
-         class="btn-primary"
-         href="https://frankyx1991.github.io/boda-fran-marga/galeria.html"
-         aria-label="Entrar">Entrar</a>
+      <a class="btn-primary" href="galeria.html" aria-label="Entrar">Entrar</a>
     </section>
   </main>
-
-  <noscript>
-    <p style="text-align:center;color:#fff;">Activa JavaScript para navegar</p>
-  </noscript>
-
-  <script>
-    // Fallback por si algo visual tapara el clic
-    const enter = document.getElementById('enterLink');
-    enter.addEventListener('click', function () {
-      // si por cualquier motivo el navegador ignorara el anchor,
-      // forzamos navegación inmediatamente:
-      setTimeout(() => {
-        if (!document.hidden) {
-          location.href = "https://frankyx1991.github.io/boda-fran-marga/galeria.html";
-        }
-      }, 50);
-    });
-  </script>
 </body>
 </html>
