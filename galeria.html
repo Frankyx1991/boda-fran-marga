@@ -48,12 +48,11 @@
       apiKey: "AIzaSyCnkjY4-MceKRyLmQlMVaA39hUIQ6nMVO8",
       authDomain: "boda-fran-marga-live.firebaseapp.com",
       projectId: "boda-fran-marga-live",
-      storageBucket: "boda-fran-marga-live.appspot.com",   // <- importante
+      storageBucket: "boda-fran-marga-live.appspot.com",   // ¡importante que sea .appspot.com!
       messagingSenderId: "945235222189",
       appId: "1:945235222189:web:ed972fab8e98620d21b024"
     };
 
-    // Inicializa Firebase
     firebase.initializeApp(firebaseConfig);
     const storage = firebase.storage();
 
@@ -67,28 +66,49 @@
       if(on){ $('#barFill').style.width='0%'; $('#pct').textContent='0'; } };
     const setProgress = (p)=>{ $('#barFill').style.width=p+'%'; $('#pct').textContent=p; };
 
-    // Subida con progreso (solo 'create' en rutas permitidas por reglas)
+    // MIME de respaldo si el móvil no lo da
+    function guessContentType(file){
+      if (file.type) return file.type;
+      const n = (file.name||'').toLowerCase();
+      if (n.endsWith('.jpg')||n.endsWith('.jpeg')) return 'image/jpeg';
+      if (n.endsWith('.png'))  return 'image/png';
+      if (n.endsWith('.heic')) return 'image/heic';
+      if (n.endsWith('.webp')) return 'image/webp';
+      if (n.endsWith('.mp4'))  return 'video/mp4';
+      if (n.endsWith('.mov'))  return 'video/quicktime';
+      return 'application/octet-stream';
+    }
+
+    // Subida con progreso (coincide con reglas: /boda-fran-marga/**)
     async function uploadToFirebase(file, folder){
-      if(!file) return;
+      if(!file) return toast('Selecciona un archivo.');
       const ts   = new Date().toISOString().replace(/[:.]/g,'-');
       const safe = (file.name || 'archivo').replace(/\s+/g,'_');
       const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safe}`;
       const ref  = storage.ref().child(path);
-      const meta = { contentType: file.type || 'application/octet-stream' };
+      const meta = { contentType: guessContentType(file) };
 
-      setControlsEnabled(false); showUploader(true); toast('Subiendo…');
-
-      await new Promise((resolve, reject) => {
-        const task = ref.put(file, meta);
-        task.on('state_changed',
-          snap => {
-            const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-            setProgress(pct);
-          },
-          err => { console.error(err); toast('❌ Error al subir. Inténtalo de nuevo.'); showUploader(false); setControlsEnabled(true); reject(err); },
-          ()  => { setProgress(100); showUploader(false); setControlsEnabled(true); toast('✅ ¡Gracias por compartir este momento con nosotros 💖!'); resolve(); }
-        );
-      });
+      try{
+        setControlsEnabled(false); showUploader(true); toast('Subiendo…');
+        await new Promise((resolve, reject) => {
+          const task = ref.put(file, meta);
+          task.on('state_changed',
+            snap => { const pct = Math.round((snap.bytesTransferred/snap.totalBytes)*100); setProgress(pct); },
+            err  => reject(err),
+            ()   => resolve()
+          );
+        });
+        setProgress(100);
+        toast('✅ ¡Gracias por compartir este momento con nosotros 💖!');
+      }catch(err){
+        console.error('Upload error:', err);
+        let msg = '❌ Error al subir';
+        if (err && err.code) msg += ` (${err.code})`;
+        toast(msg);
+      }finally{
+        showUploader(false);
+        setControlsEnabled(true);
+      }
     }
 
     // Enlaza botones → inputs
