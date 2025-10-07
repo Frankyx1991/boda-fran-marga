@@ -38,35 +38,34 @@
     </div>
   </main>
 
-  <!-- Firebase (compat, simple) -->
+  <!-- Firebase (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
   <script>
-    // Config de tu proyecto
+    // ===== Config de tu proyecto (revisa el bucket: .appspot.com) =====
     const firebaseConfig = {
       apiKey: "AIzaSyCnkjY4-MceKRyLmQlMVaA39hUIQ6nMVO8",
       authDomain: "boda-fran-marga-live.firebaseapp.com",
       projectId: "boda-fran-marga-live",
-      storageBucket: "boda-fran-marga-live.appspot.com",   // ¡importante que sea .appspot.com!
+      storageBucket: "boda-fran-marga-live.appspot.com",
       messagingSenderId: "945235222189",
       appId: "1:945235222189:web:ed972fab8e98620d21b024"
     };
-
     firebase.initializeApp(firebaseConfig);
     const storage = firebase.storage();
 
-    // Helpers UI
+    // ===== UI helpers =====
     const $  = s => document.querySelector(s);
     const $$ = s => Array.from(document.querySelectorAll(s));
     const toast = (m)=>{ const t=$('#toast'); t.textContent=m; t.classList.add('show');
-      clearTimeout(window.__t); window.__t=setTimeout(()=>t.classList.remove('show'), 3200); };
-    const setControlsEnabled = (on)=> $$('.btn-primary').forEach(b=>b.disabled=!on);
-    const showUploader = (on)=>{ const u=$('#uploader'); u.hidden=!on;
+      clearTimeout(window.__t); window.__t=setTimeout(()=>t.classList.remove('show'), 4000); };
+    const setControlsEnabled = on => $$('.btn-primary').forEach(b=>b.disabled=!on);
+    const showUploader = on => { const u=$('#uploader'); u.hidden=!on;
       if(on){ $('#barFill').style.width='0%'; $('#pct').textContent='0'; } };
-    const setProgress = (p)=>{ $('#barFill').style.width=p+'%'; $('#pct').textContent=p; };
+    const setProgress = p => { $('#barFill').style.width=p+'%'; $('#pct').textContent=p; };
 
-    // MIME de respaldo si el móvil no lo da
+    // ===== Deducción de MIME si el móvil no lo aporta =====
     function guessContentType(file){
       if (file.type) return file.type;
       const n = (file.name||'').toLowerCase();
@@ -74,51 +73,86 @@
       if (n.endsWith('.png'))  return 'image/png';
       if (n.endsWith('.heic')) return 'image/heic';
       if (n.endsWith('.webp')) return 'image/webp';
+      if (n.endsWith('.gif'))  return 'image/gif';
       if (n.endsWith('.mp4'))  return 'video/mp4';
       if (n.endsWith('.mov'))  return 'video/quicktime';
       return 'application/octet-stream';
     }
 
-    // Subida con progreso (coincide con reglas: /boda-fran-marga/**)
+    // ===== Test diagnóstico si no avanza del 0% =====
+    async function testDiagnostico(){
+      try{
+        const dataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg==";
+        const res = await fetch(dataUrl);
+        const blob = await res.blob();
+        const ts = new Date().toISOString().replace(/[:.]/g,'-');
+        const ref = storage.ref().child(`boda-fran-marga/diagnostico/${ts}_ping.png`);
+        await ref.put(blob, {contentType:'image/png'});
+        toast('Diagnóstico OK: conexión y reglas correctas ✅');
+        return true;
+      }catch(e){
+        console.error('Diagnóstico fallo:', e);
+        toast('Diagnóstico falló: ' + (e.code || e.message));
+        return false;
+      }
+    }
+
+    // ===== Subida con progreso (rutas: /boda-fran-marga/**) =====
     async function uploadToFirebase(file, folder){
-      if(!file) return toast('Selecciona un archivo.');
+      if(!file){ toast('Selecciona un archivo.'); return; }
+
       const ts   = new Date().toISOString().replace(/[:.]/g,'-');
       const safe = (file.name || 'archivo').replace(/\s+/g,'_');
       const path = `boda-fran-marga/${folder}/${ts}_${Math.floor(Math.random()*1e6)}_${safe}`;
       const ref  = storage.ref().child(path);
       const meta = { contentType: guessContentType(file) };
 
+      let watchdog;
       try{
         setControlsEnabled(false); showUploader(true); toast('Subiendo…');
-        await new Promise((resolve, reject) => {
-          const task = ref.put(file, meta);
+
+        const task = ref.put(file, meta);
+
+        // Si en 8s no se mueve del 0%, lanza diagnóstico
+        watchdog = setTimeout(async ()=>{
+          const pctText = document.getElementById('pct').textContent;
+          if (pctText === '0') {
+            toast('Sin progreso… probando diagnóstico ⚙️');
+            await testDiagnostico();
+          }
+        }, 8000);
+
+        await new Promise((resolve, reject)=>{
           task.on('state_changed',
             snap => { const pct = Math.round((snap.bytesTransferred/snap.totalBytes)*100); setProgress(pct); },
             err  => reject(err),
             ()   => resolve()
           );
         });
+
         setProgress(100);
-        toast('✅ ¡Gracias por compartir este momento con nosotros 💖!');
+        toast('✅ ¡Gracias por compartir este momento con nosotros!');
       }catch(err){
         console.error('Upload error:', err);
         let msg = '❌ Error al subir';
         if (err && err.code) msg += ` (${err.code})`;
+        if (err && err.message) msg += ` — ${err.message}`;
         toast(msg);
       }finally{
+        clearTimeout(watchdog);
         showUploader(false);
         setControlsEnabled(true);
       }
     }
 
-    // Enlaza botones → inputs
-    const inPhoto   = $('#inPhoto');
-    const inVideo   = $('#inVideo');
-    const inGallery = $('#inGallery');
+    // ===== Enlaza botones → inputs =====
+    const inPhoto   = document.getElementById('inPhoto');
+    const inVideo   = document.getElementById('inVideo');
+    const inGallery = document.getElementById('inGallery');
 
-    $('#btnPhoto').onclick   = ()=> inPhoto.click();
-    $('#btnVideo').onclick   = ()=> inVideo.click();
-    $('#btnGallery').onclick = ()=> inGallery.click();
+    document.getElementById('btnPhoto')  .onclick = ()=> inPhoto.click();
+    document.getElementById('btnVideo')  .onclick = ()=> inVideo.click();
+    document.getElementById('btnGallery').onclick = ()=> inGallery.click();
 
     inPhoto.onchange   = e => uploadToFirebase(e.target.files[0], 'fotos');
     inVideo.onchange   = e => uploadToFirebase(e.target.files[0], 'videos');
