@@ -1,12 +1,7 @@
-html, body {
-  margin: 0;
-  height: 100%;
-  font-family: 'Georgia', serif;
-}
-
+html, body { margin: 0; height: 100%; font-family: 'Georgia', serif; }
 body { overflow: hidden; }
 
-/* ===== FONDO ===== */
+/* Fondo */
 .stage {
   background-image: url('assets/fondo.jpg');
   background-position: center 38%;
@@ -17,18 +12,20 @@ body { overflow: hidden; }
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative; /* para el ::after */
 }
 
+/* Gradiente inferior – no intercepta clics */
 .stage::after {
   content: "";
   position: fixed;
   left: 0; right: 0; bottom: 0;
   height: 30vh;
   background: linear-gradient(to top, rgba(0,0,0,.4) 0%, rgba(0,0,0,0) 100%);
-  pointer-events: none;
+  pointer-events: none;  /* 🔴 clave: que no bloquee clics */
 }
 
-/* ===== ENCABEZADO ===== */
+/* Encabezado — por encima del gradiente */
 .overlay {
   text-align: center;
   color: #fff;
@@ -41,7 +38,7 @@ body { overflow: hidden; }
 .overlay .date { font-size: 1.1rem; margin: .3rem 0; }
 .overlay .subtitle { font-size: 1rem; margin-top: .3rem; }
 
-/* ===== BOTONES ===== */
+/* Botones */
 .btn-primary {
   background: rgba(180,140,60,0.85);
   color: #fff;
@@ -55,22 +52,26 @@ body { overflow: hidden; }
   text-decoration: none;
   transition: transform 0.1s ease, background 0.2s ease;
   cursor: pointer;
+  position: relative;
+  z-index: 3;           /* 🔴 por encima de todo */
+  pointer-events: auto; /* 🔴 asegura click */
 }
 .btn-primary:hover { background: rgba(180,140,60,0.95); }
 .btn-primary:active { transform: scale(0.97); }
 
-/* ===== POSICIÓN DEL BOTÓN “ENTRAR” ===== */
+/* Botón Entrar más abajo y clickeable seguro */
 .center-cta {
   display: flex;
   justify-content: center;
   align-items: flex-end;
   flex-grow: 1;
-  margin-bottom: 6rem; /* Más espacio limpio sobre la cara */
+  margin-bottom: 6rem;
   position: relative;
-  z-index: 2;
+  z-index: 3;           /* 🔴 por encima de overlays */
+  pointer-events: auto; /* 🔴 asegura click */
 }
 
-/* ===== CONTROLES (galería) ===== */
+/* Controles (galería) */
 .controls {
   display: flex;
   flex-direction: column;
@@ -78,19 +79,14 @@ body { overflow: hidden; }
   align-items: center;
   margin-bottom: 3rem;
   position: relative;
-  z-index: 2;
+  z-index: 3;
+  pointer-events: auto;
 }
-
-/* En pantallas grandes → botones en fila */
 @media (min-width: 768px) {
-  .controls {
-    flex-direction: row;
-    justify-content: center;
-    gap: 2rem;
-  }
+  .controls { flex-direction: row; justify-content: center; gap: 2rem; }
 }
 
-/* ===== TOAST ===== */
+/* Toast */
 .toast {
   position: fixed;
   left: 50%;
@@ -103,5 +99,6 @@ body { overflow: hidden; }
   font-size: 0.9rem;
   opacity: 0;
   transition: opacity .3s;
+  z-index: 4;
 }
 .toast.show { opacity: 1; }
