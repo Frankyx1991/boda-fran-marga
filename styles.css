@@ -1,108 +1,113 @@
-/* Fondo principal */
-body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  background: url("https://raw.githubusercontent.com/Frankyx1991/boda-fran-marga/main/assets/fondo-romantico.jpg") center 30% / cover no-repeat fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Poppins", sans-serif;
-  color: white;
-  overflow: hidden;
+/* Reset + fuente */
+html, body { margin: 0; height: 100%; }
+body { font-family: ui-serif, Georgia, 'Times New Roman', serif; }
+
+/* ===== FONDO (ruta absoluta para GitHub Pages) ===== */
+:root{
+  --bg-image: url('/boda-fran-marga/assets/fondo.jpg?v=1'); /* coloca vuestra foto en assets/fondo.jpg */
+  --focal-x: 50%;  /* 0% izq … 100% der */
+  --focal-y: 38%;  /* 35–45% según encuadre de vuestras caras */
 }
 
-.stage {
+.stage{
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background-image: var(--bg-image);
+  background-position: var(--focal-x) var(--focal-y);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   position: relative;
-  width: 100%;
-  height: 100%;
+}
+
+/* Velo inferior para contraste (para que los botones no tapen la cara) */
+.stage::after{
+  content:"";
+  position: fixed;
+  left:0; right:0; bottom:0;
+  height: 34vh; /* si tapan, sube a 36–40vh */
+  pointer-events: none;
+  background: linear-gradient(to top,
+    rgba(0,0,0,.45) 0%,
+    rgba(0,0,0,.28) 40%,
+    rgba(0,0,0,0) 100%);
+}
+
+/* ===== Cabecera (nombres + fecha) ===== */
+.overlay{
   text-align: center;
-}
-
-/* Encabezado */
-.overlay {
-  position: absolute;
-  top: 10%;
-  width: 100%;
-  text-align: center;
-}
-
-.overlay h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
   color: #fff;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
-  margin: 0;
+  padding: calc(env(safe-area-inset-top,0) + 26px) 16px 10px;
+  text-shadow: 0 2px 18px rgba(0,0,0,.55), 0 1px 0 rgba(0,0,0,.35);
+}
+.overlay h1{ margin:0; font-size: clamp(30px,7.2vw,50px); font-weight:700; letter-spacing:.4px; }
+.overlay .date, .overlay .subtitle{ margin:8px 0 0; font-size: clamp(15px,3.8vw,20px); }
+
+/* ===== Portada: botón Entrar centrado ===== */
+.center-cta{
+  display: grid;
+  place-items: center;
+  padding: 24px 16px 8px;
 }
 
-.overlay .date {
-  font-size: 1.2rem;
-  margin-top: 0.4rem;
-  color: #fff;
-  text-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+/* ===== Botones (mismo estilo para Entrar y los 3 de la galería) ===== */
+.btn-primary, .btn{
+  --bg: rgba(180,140,60,.78);   /* dorado translúcido que combina */
+  --border: rgba(160,120,40,.95);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color:#fff;
+  font-weight:700;
+  border-radius:14px;
+  text-shadow:0 1px 3px rgba(0,0,0,.45);
+  box-shadow:0 8px 24px rgba(0,0,0,.25);
+  backdrop-filter: blur(8px) saturate(1.05);
+  transition: transform .08s ease, background .2s ease;
 }
-
-/* Controles */
-.controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.2rem;
-  position: absolute;
-  bottom: 12%;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-/* BOTONES */
-.btn {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
-  font-weight: 600;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  transition: all 0.25s ease;
-  backdrop-filter: blur(5px);
-  min-width: 150px;
-}
-
-.btn:hover {
-  background: rgba(255, 255, 255, 0.45);
-  transform: scale(1.05);
-}
-
-/* Toast */
-.toast {
-  visibility: hidden;
-  position: absolute;
-  bottom: 25%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+.btn-primary{
   padding: 12px 18px;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  transition: 0.4s ease;
+  font-size: clamp(16px,4.2vw,18px);
+  text-decoration: none;
+}
+.btn{
+  padding: 10px 14px;
+  font-size: clamp(14px,3.6vw,16px);
+  min-width: 150px; /* finos y legibles */
+}
+.btn-primary:active, .btn:active{ transform: scale(.98); background: rgba(180,140,60,.9); }
+
+/* ===== Barra de controles inferior ===== */
+.controls{
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 12px calc(env(safe-area-inset-bottom,0) + 16px);
+  background: rgba(0,0,0,.08);
+  border-top: 1px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(10px);
 }
 
-.toast.show {
-  visibility: visible;
-  opacity: 1;
+/* ===== Toast ===== */
+.toast{
+  position: fixed;
+  left:50%;
+  bottom: calc(env(safe-area-inset-bottom,0) + 78px);
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.78);
+  color:#fff; padding:10px 14px; border-radius:10px;
+  font-size:14px; opacity:0; pointer-events:none; transition: opacity .25s ease;
 }
+.toast.show{ opacity:1; }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .overlay h1 {
-    font-size: 2rem;
-  }
-  .controls {
-    flex-direction: column;
-    gap: 0.8rem;
-    bottom: 10%;
-  }
+/* ===== Ajustes responsive del foco ===== */
+@media (max-width: 480px){
+  :root{ --focal-y: 42%; } /* baja un poco el foco en móviles altos */
+}
+@media (min-aspect-ratio: 3/2){
+  :root{ --focal-y: 32%; } /* sube el foco en pantallas anchas */
 }
