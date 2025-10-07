@@ -10,42 +10,37 @@
   <main class="stage">
     <header class="overlay">
       <h1>Fran &amp; Marga</h1>
-    <p class="date">11/10/2025</p>
+      <p class="date">11/10/2025</p>
     </header>
 
-    <nav class="controls" aria-label="Controles de subida">
-      <button id="btnPhoto" class="btn" type="button">📷 Tomar foto</button>
-      <button id="btnVideo" class="btn" type="button">🎥 Grabar vídeo</button>
-      <button id="btnGallery" class="btn" type="button">🖼️ Subir desde galería</button>
+    <nav class="controls">
+      <button id="btnPhoto" class="btn">📷 Tomar foto</button>
+      <button id="btnVideo" class="btn">🎥 Grabar vídeo</button>
+      <button id="btnGallery" class="btn">🖼️ Subir desde galería</button>
     </nav>
 
-    <!-- Inputs ocultos -->
     <input id="inPhoto"   type="file" accept="image/*"        capture="environment" hidden />
     <input id="inVideo"   type="file" accept="video/*"        capture="camcorder"   hidden />
-    <input id="inGallery" type="file" accept="image/*,video/*"                     hidden />
+    <input id="inGallery" type="file" accept="image/*,video/*" hidden />
   </main>
 
-  <!-- Toast de estado -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // URL de tu Web App de Google Apps Script (ya creada)
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjFv7oIl0ae7ZJp54PuHrilCziwJKEzm-L963sNhF7E0vyDJ2eKjn9-6QAQIz3PcfjYQ/exec";
+    // URL de tu Apps Script (Drive uploader)
+    const APPS_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbwjFv7oIl0ae7ZJp54PuHrilCziwJKEzm-L963sNhF7E0vyDJ2eKjn9-6QAQIz3PcfjYQ/exec";
 
-    // Mensajes flotantes
     const toast = (msg) => {
-      const el = document.getElementById('toast');
-      if (!el) return alert(msg);
+      const el = document.getElementById("toast");
       el.textContent = msg;
-      el.classList.add('show');
+      el.classList.add("show");
       clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+      window.__toastTimer = setTimeout(() => el.classList.remove("show"), 3500);
     };
 
-    // Subida a Drive vía Apps Script
-    async function uploadFile(file, folder){
+    async function uploadFile(file, folder) {
       if (!file) return;
-
       const maxMB = 25;
       if (file.size > maxMB * 1024 * 1024) {
         toast(`El archivo supera ${maxMB} MB.`);
@@ -53,40 +48,35 @@
       }
 
       const form = new FormData();
-      form.append('file', file);      // el servidor lo recibe como e.files.file
-      form.append('folder', folder);  // 'fotos' | 'videos' | 'galeria'
+      form.append("file", file);
+      form.append("folder", folder);
 
-      toast('Subiendo… Por favor espera');
+      toast("Subiendo… Por favor espera");
 
       try {
-        // Si ves un aviso CORS en la consola, añade , mode:'no-cors' y no intentes leer JSON
-        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: form });
-
-        // Intentar leer respuesta (si CORS lo permite)
+        const res = await fetch(APPS_SCRIPT_URL, { method: "POST", body: form });
         try {
           const data = await res.json();
-          if (!data.ok) throw new Error(data.error || 'Error');
-        } catch (_) { /* En no-cors no hay JSON; la subida suele completarse igual */ }
-
-        toast('¡Gracias por compartir este momento con nosotros 💖!');
+          if (!data.ok) throw new Error(data.error || "Error");
+        } catch (_) {}
+        toast("¡Gracias por compartir este momento con nosotros 💖!");
       } catch (err) {
         console.error(err);
-        toast('Error al subir. Vuelve a intentarlo.');
+        toast("Error al subir. Vuelve a intentarlo.");
       }
     }
 
-    // Enlazar botones → inputs
-    const inPhoto   = document.getElementById('inPhoto');
-    const inVideo   = document.getElementById('inVideo');
-    const inGallery = document.getElementById('inGallery');
+    const inPhoto = document.getElementById("inPhoto");
+    const inVideo = document.getElementById("inVideo");
+    const inGallery = document.getElementById("inGallery");
 
-    document.getElementById('btnPhoto')  .addEventListener('click', () => inPhoto.click());
-    document.getElementById('btnVideo')  .addEventListener('click', () => inVideo.click());
-    document.getElementById('btnGallery').addEventListener('click', () => inGallery.click());
+    document.getElementById("btnPhoto").onclick = () => inPhoto.click();
+    document.getElementById("btnVideo").onclick = () => inVideo.click();
+    document.getElementById("btnGallery").onclick = () => inGallery.click();
 
-    inPhoto  .addEventListener('change', (e) => uploadFile(e.target.files[0], 'fotos'));
-    inVideo  .addEventListener('change', (e) => uploadFile(e.target.files[0], 'videos'));
-    inGallery.addEventListener('change', (e) => uploadFile(e.target.files[0], 'galeria'));
+    inPhoto.onchange = (e) => uploadFile(e.target.files[0], "fotos");
+    inVideo.onchange = (e) => uploadFile(e.target.files[0], "videos");
+    inGallery.onchange = (e) => uploadFile(e.target.files[0], "galeria");
   </script>
 </body>
 </html>
