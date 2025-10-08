@@ -20,18 +20,22 @@
     position:relative;
     overflow-x:hidden;
   }
+  /* Fondo + velos para legibilidad */
   body::before{
     content:"";
-    position:fixed;
-    inset:0;
-    background:url("./assets/fondo.jpg?v=1") center center / cover no-repeat;
-    z-index:-1;
+    position:fixed; inset:0; z-index:-2;
+    background:url("./assets/fondo.jpg?v=2") center center / cover no-repeat;
     filter:brightness(.78);
   }
+  body::after{
+    content:"";
+    position:fixed; inset:0; z-index:-1;
+    background:linear-gradient(to bottom, rgba(0,0,0,.42) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,.35) 100%);
+  }
+
   header{
     width:100%;
     padding:max(14px, env(safe-area-inset-top)) 16px 8px;
-    background:linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,0));
   }
   h1{
     font-family:'Great Vibes', cursive;
@@ -54,6 +58,7 @@
     margin:0 auto 24px;
     text-shadow:0 0 14px rgba(0,0,0,.65);
   }
+
   footer{ width:100%; padding:24px 16px max(28px, env(safe-area-inset-bottom)); }
 
   .cta{
@@ -82,8 +87,8 @@
   </footer>
 
   <script>
-    // ⬇⬇⬇ Pega aquí tu URL /exec ACTUAL de Apps Script
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCnb73vZoClfh-K4cc4GWeGg8SoAleEMwGKevpsXHgpp4Cgtb-V3TyEu8oBzNRjhZ9dA/exec";
+    // ⬇⬇⬇ Pega aquí tu URL /exec ACTUAL de Apps Script:
+    const APPS_SCRIPT_URL = "PEGAR_AQUI_TU_URL_EXEC_DE_APPS_SCRIPT";
     document.getElementById('enterBtn').addEventListener('click', () => {
       if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PEGAR_AQUI')) {
         alert('Falta configurar la URL /exec de Apps Script.');
