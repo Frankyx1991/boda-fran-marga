@@ -1,12 +1,15 @@
-// uploader.js — lógica común de subida (Apps Script Web App)
+// uploader.js — subida directa con constantes embebidas
 (function(){
+  // === CONFIG EMBEBIDA (no se pide nada al usuario) ===
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbxIPYutBtB1wSUOXymWVLYKxPruemIoBCHiABfpl6GUWrLFTe-ysTooJ_EUp8qsFn5NSg/exec";
+  const SECRET   = "FranMarga2025";            // “no lo toque”: mantenemos el mismo valor del backend
+  const ALBUM    = "Boda Fran & Marga";        // subcarpeta destino dentro de la carpeta raíz
+
   const $ = (sel) => document.querySelector(sel);
   const statusEl  = () => document.getElementById('status');
   const resultsEl = () => document.getElementById('results');
 
-  function logStatus(msg){
-    const el = statusEl(); if (el) el.textContent = msg;
-  }
+  function logStatus(msg){ const el = statusEl(); if (el) el.textContent = msg; }
   function addResult(text, ok=true){
     const el = resultsEl(); if (!el) return;
     const li = document.createElement("li");
@@ -15,13 +18,13 @@
     el.prepend(li);
   }
 
-  async function uploadFile(file, endpoint, secret, album){
+  async function uploadFile(file){
     const fd = new FormData();
-    fd.append("secret", secret);
-    if (album) fd.append("album", album);
+    fd.append("secret", SECRET);
+    if (ALBUM) fd.append("album", ALBUM);
     fd.append("file", file, file.name);
 
-    const res = await fetch(endpoint, { method: "POST", body: fd });
+    const res = await fetch(ENDPOINT, { method: "POST", body: fd });
     if (!res.ok) {
       const txt = await res.text().catch(()=> "");
       throw new Error(`HTTP ${res.status} ${res.statusText} → ${txt}`);
@@ -31,16 +34,9 @@
 
   async function uploadSingle(file){
     try{
-      const endpoint = (document.getElementById('endpoint')?.value || localStorage.getItem('endpoint') || '').trim();
-      const secret   = (document.getElementById('secret')?.value   || localStorage.getItem('secret')   || '').trim();
-      const album    = (document.getElementById('album')?.value    || localStorage.getItem('album')    || '').trim();
-
-      if (!endpoint) { logStatus("Configura el endpoint /exec en Configuración."); return; }
-      if (!secret)   { logStatus("Configura el token secreto en Configuración."); return; }
-      if (!file)     { logStatus("No se seleccionó archivo."); return; }
-
+      if (!file) { logStatus("No se seleccionó archivo."); return; }
       logStatus(`Subiendo ${file.name}…`);
-      const json = await uploadFile(file, endpoint, secret, album);
+      const json = await uploadFile(file);
       if (json.ok) {
         addResult(`✔ ${file.name} → ${json.fileUrl || "(privado)"}`, true);
         logStatus("Listo.");
@@ -54,6 +50,5 @@
     }
   }
 
-  // API pública
   window.POVUploader = { uploadSingle };
 })();
