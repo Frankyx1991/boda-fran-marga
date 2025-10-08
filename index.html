@@ -8,80 +8,78 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
 
 <style>
-  /* Reset + altura fiable en móviles */
-  html, body { height: 100%; margin: 0; }
-  body {
-    min-height: 100dvh; /* más fiable que 100vh en móviles */
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    place-items: center;
-    color: #fff;
-    text-align: center;
-    font-family: 'Playfair Display', serif;
-    position: relative; /* para el ::before */
-    overflow-x: hidden;
+  /* Altura fiable + grid en 3 franjas */
+  html, body { height:100%; margin:0; }
+  body{
+    min-height:100dvh;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    place-items:center;
+    color:#fff;
+    text-align:center;
+    font-family:'Playfair Display', serif;
+    position:relative;
+    overflow-x:hidden;
   }
 
-  /* Fondo a toda pantalla con ::before (evita bugs de iOS con background-attachment) */
+  /* Fondo full-bleed con ::before para mayor compatibilidad móvil */
   body::before{
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: url("./fondo.jpg?v=3") center center / cover no-repeat; /* ajusta la ruta si procede */
-    z-index: -1; /* detrás del contenido */
-    transform: translateZ(0);
+    content:"";
+    position:fixed;
+    inset:0;
+    background:url("./assets/fondo.jpg?v=1") center center / cover no-repeat;
+    z-index:-1;
   }
 
-  /* Velos sutiles para legibilidad sin tapar la foto */
+  /* Velos sutiles para legibilidad */
   header{
-    width: 100%;
+    width:100%;
     padding: max(12px, env(safe-area-inset-top)) 12px 6px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0));
+    background:linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,0));
   }
   footer{
-    width: 100%;
-    padding: 20px 12px max(28px, env(safe-area-inset-bottom));
-    background: linear-gradient(to top, rgba(0,0,0,0.28), rgba(0,0,0,0));
+    width:100%;
+    padding:20px 12px max(28px, env(safe-area-inset-bottom));
+    background:linear-gradient(to top, rgba(0,0,0,.28), rgba(0,0,0,0));
   }
 
+  /* Título en UNA sola línea sí o sí */
   h1{
     font-family:'Great Vibes', cursive;
-    white-space: nowrap;          /* una sola línea sí o sí */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: clamp(36px, 8vw, 72px);
-    line-height: 1.05;
-    font-weight: 400;
-    margin: 0;
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.55);
-    letter-spacing: .5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    font-size:clamp(36px, 8vw, 72px);
+    line-height:1.05;
+    font-weight:400;
+    margin:0;
+    text-shadow:2px 2px 10px rgba(0,0,0,.55);
+    letter-spacing:.5px;
   }
-
   .fecha{
-    font-size: clamp(16px, 2.8vw, 22px);
-    margin: 4px 0 0 0;
-    text-shadow: 1px 1px 8px rgba(0,0,0,0.45);
-    opacity: .95;
+    font-size:clamp(16px, 2.8vw, 22px);
+    margin:4px 0 0 0;
+    text-shadow:1px 1px 8px rgba(0,0,0,.45);
+    opacity:.95;
   }
 
-  main{ width: 100%; }
+  main{ width:100%; }
 
   .cta{
-    padding: 12px 34px;
-    font-size: clamp(18px, 2.6vw, 22px);
+    padding:12px 34px;
+    font-size:clamp(18px, 2.6vw, 22px);
     font-family:'Playfair Display', serif;
-    background: rgba(255,255,255,0.86);
+    background:rgba(255,255,255,.86);
     color:#333;
-    border: none;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    border:none; border-radius:999px;
+    cursor:pointer;
+    transition:transform .2s ease, background-color .2s ease, box-shadow .2s ease;
+    box-shadow:0 6px 18px rgba(0,0,0,.18);
   }
   .cta:hover{
     background:#fff;
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+    transform:translateY(-2px) scale(1.03);
+    box-shadow:0 10px 24px rgba(0,0,0,.22);
   }
 </style>
 </head>
