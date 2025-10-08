@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fran & Marga</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+
+<style>
+  html, body { height:100%; margin:0; }
+  body{
+    min-height:100dvh;
+    display:grid;
+    grid-template-rows:auto 1fr auto;
+    place-items:center;
+    color:#fff;
+    text-align:center;
+    font-family:'Playfair Display', serif;
+    position:relative;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:url("./assets/fondo.jpg?v=1") center center / cover no-repeat;
+    z-index:-1;
+    filter:brightness(.78);
+  }
+  header{
+    width:100%;
+    padding:max(14px, env(safe-area-inset-top)) 16px 8px;
+    background:linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,0));
+  }
+  h1{
+    font-family:'Great Vibes', cursive;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    font-size:clamp(44px, 9vw, 86px);
+    line-height:1.05; font-weight:400; margin:10px 0 0 0;
+    text-shadow:0 0 18px rgba(0,0,0,.65);
+    letter-spacing:.5px;
+  }
+  .fecha{
+    font-size:clamp(16px, 2.8vw, 22px);
+    margin:8px 0 10px 0;
+    text-shadow:0 0 12px rgba(0,0,0,.55);
+    opacity:.95;
+  }
+  .claim{
+    max-width:min(900px, 92vw);
+    font-size:clamp(18px, 3.8vw, 28px);
+    line-height:1.25;
+    margin:0 auto 24px;
+    text-shadow:0 0 14px rgba(0,0,0,.65);
+  }
+  footer{ width:100%; padding:24px 16px max(28px, env(safe-area-inset-bottom)); }
+
+  .cta{
+    padding:16px 36px;
+    font-size:clamp(18px, 3.6vw, 24px);
+    font-family:'Playfair Display', serif;
+    background:linear-gradient(180deg, #cc9b43, #a57926);
+    color:#fff;
+    border:none; border-radius:26px;
+    cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease, filter .2s ease;
+    box-shadow:0 10px 28px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.35);
+  }
+  .cta:hover{ transform:translateY(-2px) scale(1.02); filter:saturate(1.05); box-shadow:0 16px 40px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.4); }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Fran &amp; Marga</h1>
+    <p class="fecha">11/10/2025</p>
+    <p class="claim">Pulsa para entrar y compartir este día con nosotros</p>
+  </header>
+
+  <footer>
+    <button class="cta" id="enterBtn">Entrar</button>
+  </footer>
+
+  <script>
+    // ⬇⬇⬇ Pega aquí tu URL /exec ACTUAL de Apps Script
+    const APPS_SCRIPT_URL = "PEGAR_AQUI_TU_URL_EXEC_DE_APPS_SCRIPT";
+    document.getElementById('enterBtn').addEventListener('click', () => {
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PEGAR_AQUI')) {
+        alert('Falta configurar la URL /exec de Apps Script.');
+        return;
+      }
+      location.href = APPS_SCRIPT_URL;
+    });
+  </script>
+</body>
+</html>
