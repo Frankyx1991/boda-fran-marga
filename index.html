@@ -83,7 +83,13 @@
       fd.append("file", file, file.name);
 
       // fetch al MISMO dominio de Apps Script → sin CORS, sin preflight custom
-      const res = await fetch(ENDPOINT, { method: "POST", body: fd });
+      const res = await fetch(ENDPOINT, {
+  method: "POST",
+  body: fd,
+  headers: { "Accept": "application/json" },
+  mode: "no-cors"
+});
+
       const txt = await res.text().catch(()=> "");
       let json = null; try { json = JSON.parse(txt); } catch {}
       if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText} → ${txt}`);
