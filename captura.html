@@ -20,7 +20,7 @@
     overflow-x:hidden;
   }
 
-  /* Fondo difuminado */
+  /* Fondo y efecto de oscurecimiento */
   body::before{
     content:"";
     position:fixed; inset:0;
@@ -115,12 +115,71 @@
   <input id="pickVideo" type="file" accept="video/*" capture="environment" style="display:none" />
   <input id="pickGaleria" type="file" accept="image/*,video/*" style="display:none" />
 
-  <script src="./uploader.js"></script>
+  <!-- JS incrustado: uploader + controladores -->
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
+    // === CONFIG EMBEBIDA ===
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbxIPYutBtB1wSUOXymWVLYKxPruemIoBCHiABfpl6GUWrLFTe-ysTooJ_EUp8qsFn5NSg/exec";
+    const SECRET   = "FranMarga2025";
+    const ALBUM    = "Boda Fran & Marga";
+
+    // --- Lógica de subida ---
+    (function(){
       const $ = (sel) => document.querySelector(sel);
+      const statusEl  = () => document.getElementById('status');
+      const resultsEl = () => document.getElementById('results');
+
+      function logStatus(msg){ const el = statusEl(); if (el) el.textContent = msg; }
+      function addResult(text, ok=true){
+        const el = resultsEl(); if (!el) { try{ console.log(text); }catch(_){} return; }
+        const li = document.createElement("li");
+        li.textContent = text;
+        li.style.color = ok ? "#9ff18b" : "#ff9f9f";
+        el.prepend(li);
+      }
+
+      async function uploadFile(file){
+        const fd = new FormData();
+        fd.append("secret", SECRET);
+        if (ALBUM) fd.append("album", ALBUM);
+        fd.append("file", file, file.name);
+
+        const res = await fetch(ENDPOINT, { method: "POST", body: fd });
+        const txt = await res.text().catch(()=> "");
+        let json = null; try { json = JSON.parse(txt); } catch {}
+        if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText} → ${txt}`);
+        if (!json || json.ok !== true) throw new Error(json && json.error ? json.error : "Respuesta no válida");
+        return json;
+      }
+
+      async function uploadSingle(file){
+        try{
+          if (!file) { logStatus("No se seleccionó archivo."); return; }
+          logStatus(`Subiendo ${file.name}…`);
+          const json = await uploadFile(file);
+          addResult(`✔ ${file.name} → ${json.fileUrl || "(privado)"}`, true);
+          logStatus("Listo.");
+          alert("Subida correcta ✅");
+        } catch (e) {
+          addResult(`✖ ${file?.name || 'archivo'}: ${e.message}`, false);
+          logStatus("Ocurrió un error.");
+          alert(e.message);
+        }
+      }
+
+      // Exponer API global para los handlers
+      window.POVUploader = { uploadSingle };
+    })();
+
+    // --- Handlers de los botones ---
+    window.addEventListener('DOMContentLoaded', () => {
+      const $ = (s) => document.querySelector(s);
       const btnFoto = $('#btnFoto'), btnVideo = $('#btnVideo'), btnGaleria = $('#btnGaleria');
       const pickFoto = $('#pickFoto'), pickVideo = $('#pickVideo'), pickGaleria = $('#pickGaleria');
+
+      if (!btnFoto || !btnVideo || !btnGaleria || !pickFoto || !pickVideo || !pickGaleria) {
+        alert('Faltan botones o inputs en captura.html (IDs). Revisa el HTML.');
+        return;
+      }
 
       const handlePicked = async (input) => {
         if (!input.files || !input.files.length) return;
