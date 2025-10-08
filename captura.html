@@ -84,13 +84,13 @@
   <input id="pickVideo" type="file" accept="video/*" capture="environment" style="display:none" />
   <input id="pickGaleria" type="file" accept="image/*,video/*" style="display:none" />
 
-  <!-- JS: subida multipart estricta (sin secret) -->
+  <!-- JS: subida multipart (sin secret) -->
   <script>
-    // Config
+    // Config — usa SIEMPRE la URL /exec ACTUAL de tu despliegue
     const ENDPOINT = "https://script.google.com/macros/s/AKfycbzaPjbdwz_I1dj2ie7-iYxlpXtoCWn8oGEOEp89UoSOWUZSbquZeE5sHu07tnPnNnCHug/exec";
     const ALBUM    = "Boda Fran & Marga";
 
-    // Subida multipart (sin headers extra → sin preflight)
+    // Subida multipart (sin headers extra → no preflight)
     async function uploadMultipart(file){
       const fd = new FormData();
       fd.append("album", ALBUM);
