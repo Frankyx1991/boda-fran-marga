@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boda Fran & Marga — Subida</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      font-family: "Poppins", sans-serif;
+    }
+    .box {
+      margin-top: 100px;
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 15px;
+      display: inline-block;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: #fff;
+      color: #000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>Fran & Marga</h2>
+  <h4>11/10/2025</h4>
+  <div class="box">
+    <h3>Selecciona foto/vídeo</h3>
+    <input type="file" id="file" accept="image/*,video/*" />
+    <br />
+    <button id="uploadBtn">Subir ahora</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbzaPjbdwz_I1dj2ie7-iYxlpXtoCWn8oGEOEp89UoSOWUZSbquZeE5sHu07tnPnNnCHug/exec";
+
+    document.getElementById('uploadBtn').onclick = async () => {
+      const file = document.getElementById('file').files[0];
+      const status = document.getElementById('status');
+      if (!file) {
+        status.textContent = "⚠️ Selecciona un archivo primero.";
+        return;
+      }
+
+      status.textContent = "⏳ Subiendo...";
+
+      const fd = new FormData();
+      fd.append('file', file, file.name);
+
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: 'POST',
+          body: fd,
+        });
+        const data = await res.json();
+        console.log(data);
+        if (data.ok) {
+          status.innerHTML = "✅ Subido correctamente: <a href='" + data.fileUrl + "' target='_blank'>Ver archivo</a>";
+        } else {
+          status.textContent = "❌ Error: " + data.error;
+        }
+      } catch (err) {
+        status.textContent = "⚠️ Error de red: " + err;
+      }
+    };
+  </script>
+</body>
+</html>
