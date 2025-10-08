@@ -1,9 +1,9 @@
-// uploader.js — versión con alertas para diagnóstico
+// uploader.js — subida directa con constantes embebidas
 (function(){
-  // === CONFIG EMBEBIDA (confirma que coinciden con tu backend) ===
+  // === CONFIG EMBEBIDA ===
   const ENDPOINT = "https://script.google.com/macros/s/AKfycbxIPYutBtB1wSUOXymWVLYKxPruemIoBCHiABfpl6GUWrLFTe-ysTooJ_EUp8qsFn5NSg/exec";
-  const SECRET   = "FranMarga2025";
-  const ALBUM    = "Boda Fran & Marga";
+  const SECRET   = "FranMarga2025";     // Debe coincidir con Apps Script
+  const ALBUM    = "Boda Fran & Marga"; // Subcarpeta destino
 
   const $ = (sel) => document.querySelector(sel);
   const statusEl  = () => document.getElementById('status');
@@ -24,22 +24,11 @@
     if (ALBUM) fd.append("album", ALBUM);
     fd.append("file", file, file.name);
 
-    // Importante: no headers extra para evitar preflight
     const res = await fetch(ENDPOINT, { method: "POST", body: fd });
-
     const txt = await res.text().catch(()=> "");
-    let json = null;
-    try { json = JSON.parse(txt); } catch { /* si no es JSON (403/HTML), cae aquí */ }
-
-    if (!res.ok) {
-      alert(`Error HTTP ${res.status} ${res.statusText}\n\nRespuesta:\n${txt.slice(0,500)}${txt.length>500?'…':''}`);
-      throw new Error(`HTTP ${res.status} ${res.statusText} → ${txt}`);
-    }
-    if (!json || json.ok !== true) {
-      const msg = json && json.error ? json.error : 'Respuesta no válida del backend';
-      alert(`Backend respondió error:\n${msg}`);
-      throw new Error(msg);
-    }
+    let json = null; try { json = JSON.parse(txt); } catch {}
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText} → ${txt}`);
+    if (!json || json.ok !== true) throw new Error(json && json.error ? json.error : "Respuesta no válida");
     return json;
   }
 
@@ -50,11 +39,10 @@
       const json = await uploadFile(file);
       addResult(`✔ ${file.name} → ${json.fileUrl || "(privado)"}`, true);
       logStatus("Listo.");
-      alert("Subida correcta ✅");
     } catch (e) {
       addResult(`✖ ${file?.name || 'archivo'}: ${e.message}`, false);
       logStatus("Ocurrió un error.");
-      // El alert detallado ya se mostró en uploadFile()
+      alert(e.message); // diagnóstico visible
     }
   }
 
